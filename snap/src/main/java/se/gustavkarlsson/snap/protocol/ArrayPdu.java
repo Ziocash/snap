@@ -2,6 +2,14 @@ package se.gustavkarlsson.snap.protocol;
 
 public class ArrayPdu implements Pdu {
 
+	private byte[] array;
+	private int size = 0;
+	private int position = 0;
+	
+	public ArrayPdu() {
+		array = new byte[10];
+	}
+	
 	@Override
 	public void putPad(int length) {
 		// TODO Auto-generated method stub
