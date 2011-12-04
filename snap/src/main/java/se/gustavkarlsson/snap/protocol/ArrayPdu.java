@@ -1,145 +1,269 @@
 package se.gustavkarlsson.snap.protocol;
 
+import java.nio.charset.Charset;
+import java.util.Arrays;
+
+import se.gustavkarlsson.snap.constants.Messages;
+
 public class ArrayPdu implements Pdu {
+	
+	private static final Charset utf8 = Charset.forName("UTF-8");
+	private static final int byteSize = 1;
+	private static final int shortSize = 2;
+	private static final int intSize = 4;
+	private static final int longSize = 8;
 
 	private byte[] array;
-	private int size = 0;
 	private int position = 0;
-	
+	private int size = 0;
+
 	public ArrayPdu() {
 		array = new byte[10];
 	}
-	
-	@Override
-	public void putPad(int length) {
-		// TODO Auto-generated method stub
 
+	@Override
+	public void putPad(final int length) {
+		if (length < 0) {
+			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NEGATIVE
+					+ ": " + length);
+		}
+
+		int newPosition = position + length;
+		ensureArraySize(newPosition);
+
+		for (int i = position; i < newPosition; i++) {
+			array[i] = 0;
+		}
+
+		position = newPosition;
+		ensurePduSize(position);
 	}
 
 	@Override
 	public void putBooleanAsByte(boolean b) {
-		// TODO Auto-generated method stub
+		byte[] bytes = new byte[] { (byte) (b ? 1 : 0) };
 
+		putBytes(bytes);
 	}
 
 	@Override
 	public void putByte(byte b) {
-		// TODO Auto-generated method stub
+		byte[] bytes = new byte[] { b };
 
+		putBytes(bytes);
 	}
 
 	@Override
 	public void putBytes(byte[] bytes) {
-		// TODO Auto-generated method stub
+		int newPosition = position + bytes.length;
+		ensureArraySize(newPosition);
 
+		System.arraycopy(bytes, 0, array, position, bytes.length);
+
+		position = newPosition;
+		ensurePduSize(position);
 	}
 
 	@Override
 	public void putShort(short s) {
-		// TODO Auto-generated method stub
-
+		byte[] bytes = primitiveToByteArray(s, shortSize);
+		
+		putBytes(bytes);
 	}
 
 	@Override
 	public void putInt(int i) {
-		// TODO Auto-generated method stub
-
+		byte[] bytes = primitiveToByteArray(i, intSize);
+		
+		putBytes(bytes);
 	}
 
 	@Override
 	public void putLong(long l) {
-		// TODO Auto-generated method stub
-
+		byte[] bytes = primitiveToByteArray(l, longSize);
+		
+		putBytes(bytes);
 	}
 
 	@Override
 	public void putStringUtf8(String string) {
-		// TODO Auto-generated method stub
+		byte[] stringBytes = string.getBytes(utf8);
+		
+		byte[] lengthBytes = primitiveToByteArray(stringBytes.length, intSize);
 
+		putBytes(lengthBytes);
+		putBytes(stringBytes);
 	}
 
 	@Override
 	public void skip(int length) {
-		// TODO Auto-generated method stub
-
+		if (length < 0) {
+			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NEGATIVE
+					+ ": " + length);
+		}
+		int newPosition = position + length;
+		checkPduSize(newPosition);
+		
+		position = newPosition;
 	}
 
 	@Override
 	public boolean getBooleanAsByte() {
-		// TODO Auto-generated method stub
-		return false;
+		byte[] bytes = getBytes(byteSize);
+		
+		boolean b = (bytes[0] == 0) ? false : true;
+		
+		return b;
 	}
 
 	@Override
 	public byte getByte() {
-		// TODO Auto-generated method stub
-		return 0;
+		byte[] bytes = getBytes(byteSize);
+		
+		byte b = bytes[0];
+		
+		return b;
 	}
 
 	@Override
 	public byte[] getBytes(int length) {
-		// TODO Auto-generated method stub
-		return null;
+		if (length < 0) {
+			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NEGATIVE
+					+ ": " + length);
+		}
+		int newPosition = position + length;
+		checkPduSize(newPosition);
+		
+		byte[] bytes = new byte[length];
+		System.arraycopy(array, position, bytes, 0, length);
+		
+		position = newPosition;
+		return bytes;
 	}
 
 	@Override
 	public short getShort() {
-		// TODO Auto-generated method stub
-		return 0;
+		byte[] bytes = getBytes(shortSize);
+		
+		short s = (short) byteArrayToPrimitive(bytes);
+		
+		return s;
 	}
 
 	@Override
 	public int getInt() {
-		// TODO Auto-generated method stub
-		return 0;
+		byte[] bytes = getBytes(intSize);
+		
+		int i = (int) byteArrayToPrimitive(bytes);
+		
+		return i;
 	}
 
 	@Override
 	public long getLong() {
-		// TODO Auto-generated method stub
-		return 0;
+		byte[] bytes = getBytes(longSize);
+		
+		long l = byteArrayToPrimitive(bytes);
+		
+		return l;
 	}
 
 	@Override
 	public String getStringUtf8() {
-		// TODO Auto-generated method stub
-		return null;
+		byte[] lengthBytes = new byte[intSize];
+		System.arraycopy(array, position, lengthBytes, 0, intSize);
+		int length = (int) byteArrayToPrimitive(lengthBytes);
+		
+		byte[] stringBytes = new byte[length];
+		System.arraycopy(array, position + intSize, stringBytes, 0, length);
+		String string = new String(stringBytes, utf8);
+		
+		skip(intSize);
+		skip(length);
+		return string;
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size;
 	}
 
 	@Override
 	public int remaining() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size - position;
 	}
 
 	@Override
 	public int getPosition() {
-		// TODO Auto-generated method stub
-		return 0;
+		return position;
 	}
 
 	@Override
 	public void setPosition(int position) {
-		// TODO Auto-generated method stub
-
+		if (position < 0) {
+			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NEGATIVE
+					+ ": " + position);
+		}
+		this.position = position;
 	}
 
 	@Override
 	public void resetPosition() {
-		// TODO Auto-generated method stub
-
+		position = 0;
 	}
 
 	@Override
 	public byte[] toByteArray() {
-		// TODO Auto-generated method stub
-		return null;
+		byte[] bytes = new byte[size];
+		System.arraycopy(array, 0, bytes, 0, size);
+		return bytes;
 	}
 
+	private void ensureArraySize(final int mustFit) {
+		if (array.length < mustFit) {
+			int newSize = array.length;
+			do {
+				newSize *= 2;
+			} while (newSize < mustFit);
+
+			byte[] newArray = new byte[newSize];
+			System.arraycopy(array, 0, newArray, 0, size);
+
+			array = newArray;
+		}
+	}
+
+	private void ensurePduSize(final int possibleNewSize) {
+		if (size < possibleNewSize) {
+			size = possibleNewSize;
+		}
+	}
+	
+	private void checkPduSize(final int mustFit) {
+		if (size < mustFit) {
+			throw new IndexOutOfBoundsException("PDU position out of bounds: " + mustFit);
+		}
+	}
+	
+	private byte[] primitiveToByteArray(long value, int size) {
+		byte[] bytes = new byte[size];
+		
+		for (int i = 0; i < size; i++) {
+			int shift = (size - i - 1) * 8;
+			bytes[i] = (byte)((value >> shift) & 0xff);
+		}
+		
+		return bytes;
+	}
+	
+	private long byteArrayToPrimitive(byte[] bytes) {
+		long value = 0;
+		
+		for (int i = 0; i < bytes.length; i++) {
+			int shift = (bytes.length - i - 1) * 8;
+			value |= (long)(0xff & bytes[i]) << shift;
+		}
+		
+		return value;
+	}
 }

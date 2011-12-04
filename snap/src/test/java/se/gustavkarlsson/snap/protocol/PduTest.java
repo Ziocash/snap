@@ -225,8 +225,8 @@ public abstract class PduTest {
 	public void getStringReturnsSameAsWasPut() throws Exception {
 		putAndGetString("");
 		putAndGetString("hej");
-		putAndGetString("Testar att skriva n�got lite l�ngre.");
-		putAndGetString("=\")�@UGVM(�)?hv23");
+		putAndGetString("Testing something longer");
+		putAndGetString("=\")!@UGVM(*/)?hv23");
 		putAndGetString("65412");
 
 		for (int i = 0; i < ITERATIONS_TO_RUN; i++) {
