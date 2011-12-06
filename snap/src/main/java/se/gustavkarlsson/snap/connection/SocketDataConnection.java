@@ -4,7 +4,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -16,32 +15,25 @@ import se.gustavkarlsson.snap.util.LoggerHelper;
 public class SocketDataConnection implements DataConnection {
 
 	private static final Logger log = LoggerHelper.getLogger();
-	private static final int MAX_PORT = 65535;
 	private static final int BUFFER_SIZE = 65536;
 
-	protected InetAddress address;
-	protected int port;
+	protected Configuration config;
 	protected Socket socket;
 
 	private InputStream in;
 	private OutputStream out;
 
-	public SocketDataConnection(InetAddress address, int port)
-			throws IllegalArgumentException {
-		if (port < 0 || MAX_PORT < port) {
-			throw new IllegalArgumentException(Messages.PORT_OUT_OF_RANGE
-					+ ": " + port);
-		} else if (address == null) {
+	public SocketDataConnection(Configuration config) {
+		if (config == null) {
 			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NULL);
 		}
-
-		this.address = address;
-		this.port = port;
+		
+		this.config = config;
 	}
 
 	@Override
 	public void open() throws IOException {
-		socket = new Socket(address, port);
+		socket = new Socket(config.getAddress(), config.getPort());
 		setup();
 	}
 
@@ -97,6 +89,8 @@ public class SocketDataConnection implements DataConnection {
 		} catch (SocketException e) {
 			log.warn("Could not set SO_RCVBUF", e);
 		}
+
+		// TODO Wrap encryption and compression
 
 		in = socket.getInputStream();
 		out = socket.getOutputStream();

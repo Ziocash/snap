@@ -2,7 +2,6 @@ package se.gustavkarlsson.snap.connection;
 
 import java.io.IOException;
 import java.net.BindException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 
 import org.apache.log4j.Logger;
@@ -15,11 +14,11 @@ public class ServerSocketDataConnection extends SocketDataConnection {
 
 	private ServerSocket serverSocket;
 
-	public ServerSocketDataConnection(InetAddress address, int port)
-			throws BindException, IOException, IllegalArgumentException {
-		super(address, port);
+	public ServerSocketDataConnection(Configuration config)
+			throws BindException, IOException {
+		super(config);
 
-		serverSocket = new ServerSocket(this.port, 1, this.address);
+		serverSocket = new ServerSocket(this.config.getPort(), 1, this.config.getAddress());
 	}
 
 	@Override

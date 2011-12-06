@@ -1,7 +1,6 @@
 package se.gustavkarlsson.snap.protocol;
 
 import java.nio.charset.Charset;
-import java.util.Arrays;
 
 import se.gustavkarlsson.snap.constants.Messages;
 
