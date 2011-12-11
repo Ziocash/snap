@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
 
   <name>Snap</name>
-  <url>https://github.com/MrMadMan/snap</url>
+  <url>https://github.com/mrmadman/snap</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,6 +25,51 @@
     	<groupId>log4j</groupId>
     	<artifactId>log4j</artifactId>
     	<version>1.2.16</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse.swt.win32.win32</groupId>
+    	<artifactId>x86</artifactId>
+    	<version>3.3.0-v3346</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse.swt.wpf.win32</groupId>
+    	<artifactId>x86</artifactId>
+    	<version>3.3.0-v3346</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse.swt.gtk.linux</groupId>
+    	<artifactId>x86</artifactId>
+    	<version>3.3.0-v3346</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse.swt.gtk.linux</groupId>
+    	<artifactId>x86_64</artifactId>
+    	<version>3.3.0-v3346</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse.swt.gtk.linux</groupId>
+    	<artifactId>ppc</artifactId>
+    	<version>3.3.0-v3346</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse.swt.carbon</groupId>
+    	<artifactId>macosx</artifactId>
+    	<version>3.3.0-v3346</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse.swt.gtk.solaris</groupId>
+    	<artifactId>sparc</artifactId>
+    	<version>3.3.0-v3346</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse.swt.motif.aix</groupId>
+    	<artifactId>ppc</artifactId>
+    	<version>3.3.0-v3346</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse</groupId>
+    	<artifactId>jface</artifactId>
+    	<version>3.3.0-I20070606-0010</version>
     </dependency>
   </dependencies>
 </project>

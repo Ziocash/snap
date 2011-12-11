@@ -10,7 +10,11 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
 
+import se.gustavkarlsson.snap.gui.SnapWizard;
 import se.gustavkarlsson.snap.util.LoggerHelper;
 
 public class Snap {
@@ -19,7 +23,7 @@ public class Snap {
 	private static final String LOG_LAYOUT = "%-10r %-5p [%t]: %m%n";
 
 	public static final String APP_NAME = "Snap";
-	public static final String VERSION = "2.0.0-SNAPSHOT";
+	public static final String APP_VERSION = "2.0.0-SNAPSHOT";
 	public static final String APP_DIR = getAppDir();
 
 	private static final String LOG_FILE_EXTENSION = ".log";
@@ -28,7 +32,18 @@ public class Snap {
 
 	public static void main(String[] args) {
 		configureLogging();
-		LOG.info("hello");
+		runWizard();
+	}
+
+	private static void runWizard() {
+		LOG.info("Creating GUI");
+		Display.getDefault();
+		Wizard wizard = new SnapWizard();
+		WizardDialog dialog = new WizardDialog(null, wizard);
+		dialog.create();
+		LOG.info("Opening GUI");
+		dialog.open();
+		LOG.info("GUI closed");
 	}
 
 	private static void configureLogging() {
@@ -37,10 +52,12 @@ public class Snap {
 		root.removeAllAppenders();
 		Layout layout = new PatternLayout(LOG_LAYOUT);
 		root.addAppender(new ConsoleAppender(layout));
+		LOG.info("Console logging started");
 
 		String logFilePath = APP_DIR + LOG_FILE_NAME;
 		try {
 			root.addAppender(new FileAppender(layout, logFilePath));
+			LOG.info("File logging started");
 		} catch (IOException e) {
 			LOG.warn("Failed to create FileAppender: " + e.getMessage());
 		}
