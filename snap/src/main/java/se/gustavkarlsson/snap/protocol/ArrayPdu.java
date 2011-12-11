@@ -6,11 +6,11 @@ import se.gustavkarlsson.snap.constants.Messages;
 
 public class ArrayPdu implements Pdu {
 	
-	private static final Charset utf8 = Charset.forName("UTF-8");
-	private static final int byteSize = 1;
-	private static final int shortSize = 2;
-	private static final int intSize = 4;
-	private static final int longSize = 8;
+	private static final Charset UTF_8 = Charset.forName("UTF-8");
+	private static final int BYTE_SIZE = 1;
+	private static final int SHORT_SIZE = 2;
+	private static final int INT_SIZE = 4;
+	private static final int LONG_SIZE = 8;
 
 	private byte[] array;
 	private int position = 0;
@@ -65,30 +65,30 @@ public class ArrayPdu implements Pdu {
 
 	@Override
 	public void putShort(short s) {
-		byte[] bytes = primitiveToByteArray(s, shortSize);
+		byte[] bytes = primitiveToByteArray(s, SHORT_SIZE);
 		
 		putBytes(bytes);
 	}
 
 	@Override
 	public void putInt(int i) {
-		byte[] bytes = primitiveToByteArray(i, intSize);
+		byte[] bytes = primitiveToByteArray(i, INT_SIZE);
 		
 		putBytes(bytes);
 	}
 
 	@Override
 	public void putLong(long l) {
-		byte[] bytes = primitiveToByteArray(l, longSize);
+		byte[] bytes = primitiveToByteArray(l, LONG_SIZE);
 		
 		putBytes(bytes);
 	}
 
 	@Override
 	public void putStringUtf8(String string) {
-		byte[] stringBytes = string.getBytes(utf8);
+		byte[] stringBytes = string.getBytes(UTF_8);
 		
-		byte[] lengthBytes = primitiveToByteArray(stringBytes.length, intSize);
+		byte[] lengthBytes = primitiveToByteArray(stringBytes.length, INT_SIZE);
 
 		putBytes(lengthBytes);
 		putBytes(stringBytes);
@@ -108,7 +108,7 @@ public class ArrayPdu implements Pdu {
 
 	@Override
 	public boolean getBooleanAsByte() {
-		byte[] bytes = getBytes(byteSize);
+		byte[] bytes = getBytes(BYTE_SIZE);
 		
 		boolean b = (bytes[0] == 0) ? false : true;
 		
@@ -117,7 +117,7 @@ public class ArrayPdu implements Pdu {
 
 	@Override
 	public byte getByte() {
-		byte[] bytes = getBytes(byteSize);
+		byte[] bytes = getBytes(BYTE_SIZE);
 		
 		byte b = bytes[0];
 		
@@ -142,7 +142,7 @@ public class ArrayPdu implements Pdu {
 
 	@Override
 	public short getShort() {
-		byte[] bytes = getBytes(shortSize);
+		byte[] bytes = getBytes(SHORT_SIZE);
 		
 		short s = (short) byteArrayToPrimitive(bytes);
 		
@@ -151,7 +151,7 @@ public class ArrayPdu implements Pdu {
 
 	@Override
 	public int getInt() {
-		byte[] bytes = getBytes(intSize);
+		byte[] bytes = getBytes(INT_SIZE);
 		
 		int i = (int) byteArrayToPrimitive(bytes);
 		
@@ -160,7 +160,7 @@ public class ArrayPdu implements Pdu {
 
 	@Override
 	public long getLong() {
-		byte[] bytes = getBytes(longSize);
+		byte[] bytes = getBytes(LONG_SIZE);
 		
 		long l = byteArrayToPrimitive(bytes);
 		
@@ -169,15 +169,15 @@ public class ArrayPdu implements Pdu {
 
 	@Override
 	public String getStringUtf8() {
-		byte[] lengthBytes = new byte[intSize];
-		System.arraycopy(array, position, lengthBytes, 0, intSize);
+		byte[] lengthBytes = new byte[INT_SIZE];
+		System.arraycopy(array, position, lengthBytes, 0, INT_SIZE);
 		int length = (int) byteArrayToPrimitive(lengthBytes);
 		
 		byte[] stringBytes = new byte[length];
-		System.arraycopy(array, position + intSize, stringBytes, 0, length);
-		String string = new String(stringBytes, utf8);
+		System.arraycopy(array, position + INT_SIZE, stringBytes, 0, length);
+		String string = new String(stringBytes, UTF_8);
 		
-		skip(intSize);
+		skip(INT_SIZE);
 		skip(length);
 		return string;
 	}

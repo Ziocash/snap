@@ -2,9 +2,9 @@ package se.gustavkarlsson.snap.main;
 
 import java.io.IOException;
 import java.net.BindException;
+import java.net.InetAddress;
 import java.util.Observable;
 
-import se.gustavkarlsson.snap.connection.Configuration;
 import se.gustavkarlsson.snap.connection.DataConnection;
 import se.gustavkarlsson.snap.connection.SocketDataConnection;
 
@@ -15,9 +15,10 @@ public class Receiver extends Observable implements Runnable {
 
 	}
 
-	public void initConnection(Configuration config)
-			throws BindException, IOException {
-		DataConnection clientConnection = new SocketDataConnection(config);
+	public void initConnection(int port, InetAddress address,
+			String encryptionKey) throws BindException, IOException {
+		DataConnection clientConnection = new SocketDataConnection(port,
+				address, encryptionKey);
 		clientConnection.open();
 	}
 
