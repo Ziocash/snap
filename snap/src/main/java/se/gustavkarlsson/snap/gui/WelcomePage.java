@@ -1,56 +1,68 @@
 package se.gustavkarlsson.snap.gui;
 
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import se.gustavkarlsson.snap.constants.Messages;
+import se.gustavkarlsson.snap.resources.Strings;
 
 public class WelcomePage extends WizardPage {
 	private Button btnSend;
 	private Button btnReceive;
 
 	public WelcomePage() {
-		super("welcomePage");
-		setTitle(Messages.WELCOME_PAGE_TITLE);
-		setDescription(Messages.WELCOME_PAGE_DESCRIPTION);
+		super(WelcomePage.class.getName());
+		setTitle(Strings.WELCOME_PAGE_TITLE);
+		setDescription(Strings.WELCOME_PAGE_DESCRIPTION);
 	}
 
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 
 		setControl(container);
-		RowLayout rl_container = new RowLayout(SWT.VERTICAL);
-		rl_container.marginWidth = 10;
-		rl_container.marginHeight = 10;
-		rl_container.marginBottom = 0;
-		rl_container.marginRight = 0;
-		rl_container.marginLeft = 0;
-		rl_container.marginTop = 0;
-		container.setLayout(rl_container);
+		container.setLayout(new GridLayout(1, false));
 
 		Label lblQuestion = new Label(container, SWT.NONE);
 		lblQuestion.setText("Do you want to send or receive files?");
 
 		btnSend = new Button(container, SWT.RADIO);
-		btnSend.setSelection(true);
-		btnSend.setText("Send");
+		btnSend.addSelectionListener(new RadioButtonSelectedAdapter());
+		btnSend.setText("&Send");
 
 		btnReceive = new Button(container, SWT.RADIO);
-		btnReceive.setText("Receive");
+		btnReceive.addSelectionListener(new RadioButtonSelectedAdapter());
+		btnReceive.setText("&Receive");
+	}
+	
+	public Class<Strings> getMessages() {
+		return Strings.class;
+	}
+	
+	@Override
+	public boolean canFlipToNextPage() {
+		return (btnSend.getSelection() || btnReceive.getSelection());
 	}
 
-	// @Override
-	// public IWizardPage getNextPage() {
-	// if (btnSend.getSelection()) {
-	// // TODO return Send page
-	// } else {
-	// // TODO return Receive page
-	// }
-	// return null;
-	// }
-
+	
+	@Override
+	public IWizardPage getNextPage() {
+		if (btnSend.getSelection()) {
+			return getWizard().getPage(ChooseFilesPage.class.getName());
+		} else {
+			return null; // TODO return Receive page
+		}
+	}
+	
+	private class RadioButtonSelectedAdapter extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			getWizard().getContainer().updateButtons();
+		}
+	}
 }

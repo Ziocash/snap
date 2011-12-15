@@ -2,7 +2,7 @@ package se.gustavkarlsson.snap.protocol;
 
 import java.nio.charset.Charset;
 
-import se.gustavkarlsson.snap.constants.Messages;
+import se.gustavkarlsson.snap.resources.Strings;
 
 public class ArrayPdu implements Pdu {
 	
@@ -23,7 +23,7 @@ public class ArrayPdu implements Pdu {
 	@Override
 	public void putPad(final int length) {
 		if (length < 0) {
-			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NEGATIVE
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NEGATIVE
 					+ ": " + length);
 		}
 
@@ -97,7 +97,7 @@ public class ArrayPdu implements Pdu {
 	@Override
 	public void skip(int length) {
 		if (length < 0) {
-			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NEGATIVE
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NEGATIVE
 					+ ": " + length);
 		}
 		int newPosition = position + length;
@@ -127,7 +127,7 @@ public class ArrayPdu implements Pdu {
 	@Override
 	public byte[] getBytes(int length) {
 		if (length < 0) {
-			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NEGATIVE
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NEGATIVE
 					+ ": " + length);
 		}
 		int newPosition = position + length;
@@ -200,7 +200,7 @@ public class ArrayPdu implements Pdu {
 	@Override
 	public void setPosition(int position) {
 		if (position < 0) {
-			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NEGATIVE
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NEGATIVE
 					+ ": " + position);
 		}
 		this.position = position;

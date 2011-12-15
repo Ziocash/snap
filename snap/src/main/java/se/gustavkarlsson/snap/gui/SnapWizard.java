@@ -13,10 +13,21 @@ public class SnapWizard extends Wizard {
 	@Override
 	public void addPages() {
 		addPage(new WelcomePage());
+
+		// Sender
+		addPage(new ChooseFilesPage());
+		addPage(new AdvancedOptionsPage());
+
+		// Receiver
 	}
 
 	@Override
 	public boolean performFinish() {
+		return false;
+	}
+
+	@Override
+	public boolean canFinish() {
 		return false;
 	}
 

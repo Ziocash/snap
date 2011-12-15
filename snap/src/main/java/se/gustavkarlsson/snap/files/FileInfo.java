@@ -1,6 +1,6 @@
 package se.gustavkarlsson.snap.files;
 
-import se.gustavkarlsson.snap.constants.Messages;
+import se.gustavkarlsson.snap.resources.Strings;
 
 public class FileInfo {
 
@@ -9,7 +9,7 @@ public class FileInfo {
 
 	public FileInfo(boolean isFile, String name) {
 		if (name == null) {
-			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NULL);
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL);
 		}
 
 		this.isFile = isFile;

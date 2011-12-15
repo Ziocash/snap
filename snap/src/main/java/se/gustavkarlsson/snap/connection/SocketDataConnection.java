@@ -10,7 +10,7 @@ import java.net.SocketException;
 
 import org.apache.log4j.Logger;
 
-import se.gustavkarlsson.snap.constants.Messages;
+import se.gustavkarlsson.snap.resources.Strings;
 import se.gustavkarlsson.snap.util.LoggerHelper;
 
 public class SocketDataConnection implements DataConnection {
@@ -33,20 +33,20 @@ public class SocketDataConnection implements DataConnection {
 	public SocketDataConnection(int port, InetAddress address,
 			String encryptionKey) {
 		if (port < 0 || MAX_PORT < port) {
-			throw new IllegalArgumentException(Messages.PORT_OUT_OF_RANGE
+			throw new IllegalArgumentException(Strings.PORT_OUT_OF_RANGE
 					+ ": " + port);
 		}
 		if (address == null) {
-			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NULL
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
 					+ ": address");
 		}
 		if (encryptionKey == null) {
-			throw new IllegalArgumentException(Messages.ARGUMENT_IS_NULL
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
 					+ ": encryptionKey");
 		}
 		if (compressionRate < 0 || 9 < compressionRate) {
 			throw new IllegalArgumentException(
-					Messages.COMPRESSION_RATE_OUT_OF_RANGE + ": "
+					Strings.COMPRESSION_RATE_OUT_OF_RANGE + ": "
 							+ compressionRate);
 		}
 
