@@ -1,8 +1,10 @@
 package se.gustavkarlsson.snap.tree;
 
+import java.io.Serializable;
+
 import se.gustavkarlsson.snap.resources.Strings;
 
-public abstract class LeafNode {
+public abstract class LeafNode implements Serializable {
 	
 	protected final Root root;
 

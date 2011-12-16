@@ -15,7 +15,7 @@ public abstract class Node extends LeafNode implements Parent {
 		LeafNode[] childArray = new LeafNode[children.size()];
 		return children.toArray(childArray);
 	}
-	
+
 	@Override
 	public void addChild(LeafNode child) {
 		if (root.getDecendants().contains(child)) {
@@ -25,13 +25,13 @@ public abstract class Node extends LeafNode implements Parent {
 		children.add(child);
 		root.getDecendants().add(child);
 	}
-	
+
 	@Override
 	public void removeChild(LeafNode child) {
 		child.remove();
 		children.remove(child);
 	}
-	
+
 	@Override
 	public boolean hasChildren() {
 		return !children.isEmpty();

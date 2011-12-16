@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class Root implements Parent {
-	
+
 	private final Set<LeafNode> decendants = new HashSet<LeafNode>();
 
 	private final ArrayList<LeafNode> children = new ArrayList<LeafNode>();
@@ -37,7 +37,7 @@ public final class Root implements Parent {
 	public boolean hasChildren() {
 		return !children.isEmpty();
 	}
-	
+
 	Set<LeafNode> getDecendants() {
 		return decendants;
 	}
