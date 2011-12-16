@@ -13,19 +13,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 
-import se.gustavkarlsson.snap.gui.filetree.FileNode;
-import se.gustavkarlsson.snap.gui.filetree.FileTreeContentProvider;
-import se.gustavkarlsson.snap.gui.filetree.FileTreeLabelProvider;
-import se.gustavkarlsson.snap.gui.filetree.FolderNode;
 import se.gustavkarlsson.snap.resources.Strings;
+import se.gustavkarlsson.snap.tree.Root;
+import se.gustavkarlsson.snap.tree.TreeContentProvider;
+import se.gustavkarlsson.snap.tree.TreeLabelProvider;
+import se.gustavkarlsson.snap.tree.filetree.FileNode;
+import se.gustavkarlsson.snap.tree.filetree.FolderNode;
 
 public class ChooseFilesPage extends WizardPage {
-	
-	private final FolderNode fileTreeRoot = new FolderNode("root");
-	
+
+	private final Root fileTreeRoot = new Root();
+
 	private Button btnEnableAdvancedOptions;
 	private TreeViewer fileTreeViewer;
-	
 
 	/**
 	 * Create the wizard.
@@ -54,21 +54,22 @@ public class ChooseFilesPage extends WizardPage {
 		Tree fileTree = fileTreeViewer.getTree();
 		fileTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
 				1));
-		fileTreeViewer.setLabelProvider(new FileTreeLabelProvider());
-		fileTreeViewer.setContentProvider(new FileTreeContentProvider());
+		fileTreeViewer.setLabelProvider(new TreeLabelProvider());
+		fileTreeViewer.setContentProvider(new TreeContentProvider());
 		// TODO Sorter
 		fileTreeViewer.setInput(fileTreeRoot);
 
 		// TODO Delete test code
-		FolderNode folder1 = new FolderNode("Folder 1.1");
-		folder1.addChild(new FolderNode("Folder 2.1"));
-		folder1.addChild(new FileNode(new File("C:\\Windows\\win.ini")));
-		folder1.addChild(new FolderNode("Folder 2.2"));
+		FolderNode folder1 = new FolderNode(fileTreeRoot, "Folder 1.1");
+		folder1.addChild(new FolderNode(fileTreeRoot, "Folder 2.1"));
+		folder1.addChild(new FileNode(fileTreeRoot, new File(
+				"C:\\Windows\\win.ini")));
+		folder1.addChild(new FolderNode(fileTreeRoot, "Folder 2.2"));
 		fileTreeRoot.addChild(folder1);
-		fileTreeRoot.addChild(new FileNode(new File("C:\\Windows\\win.ini"),
-				"'Nother file"));
+		fileTreeRoot.addChild(new FileNode(fileTreeRoot, new File(
+				"C:\\Windows\\win.ini"), "'Nother file"));
 		// TODO End delete test code
-		
+
 		fileTreeViewer.refresh();
 
 		btnEnableAdvancedOptions = new Button(container, SWT.CHECK);
@@ -77,7 +78,7 @@ public class ChooseFilesPage extends WizardPage {
 
 	@Override
 	public boolean canFlipToNextPage() {
-		return (fileTreeRoot.getChildren().size() > 0);
+		return fileTreeRoot.hasChildren();
 	}
 
 	@Override
