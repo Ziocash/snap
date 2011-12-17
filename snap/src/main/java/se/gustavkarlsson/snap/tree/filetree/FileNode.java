@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.eclipse.swt.graphics.Image;
 
+import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
 import se.gustavkarlsson.snap.tree.Label;
 import se.gustavkarlsson.snap.tree.LeafNode;
@@ -52,6 +53,6 @@ public class FileNode extends LeafNode implements Label {
 
 	@Override
 	public Image getImage() {
-		return null; // TODO Return File Image
+		return Images.FILE;
 	}
 }
