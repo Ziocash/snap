@@ -2,7 +2,6 @@ package se.gustavkarlsson.snap.tree.filetree;
 
 import org.eclipse.swt.graphics.Image;
 
-import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
 import se.gustavkarlsson.snap.tree.Label;
 import se.gustavkarlsson.snap.tree.Node;
@@ -32,6 +31,6 @@ public class FolderNode extends Node implements Label {
 
 	@Override
 	public Image getImage() {
-		return Images.FOLDER;
+		return null; // TODO Return File Image
 	}
 }
