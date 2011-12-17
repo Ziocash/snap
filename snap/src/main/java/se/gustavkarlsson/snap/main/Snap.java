@@ -15,20 +15,19 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 
 import se.gustavkarlsson.snap.gui.SnapWizard;
+import se.gustavkarlsson.snap.resources.Directories;
 import se.gustavkarlsson.snap.util.LoggerHelper;
 
 public class Snap {
 
+	public static final String APP_NAME = "Snap";
+	public static final String APP_VERSION = "2.0.0-SNAPSHOT";
+
 	private static final Logger LOG = LoggerHelper.getLogger();
 	private static final String LOG_LAYOUT = "%-10r %-5p [%t]: %m%n";
 
-	public static final String APP_NAME = "Snap";
-	public static final String APP_VERSION = "2.0.0-SNAPSHOT";
-	public static final String APP_DIR = getAppDir();
-
 	private static final String LOG_FILE_EXTENSION = ".log";
 	private static final String LOG_FILE_DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss-S";
-	private static final String LOG_FILE_NAME = getLogFileName();
 
 	public static void main(String[] args) {
 		configureLogging();
@@ -53,8 +52,8 @@ public class Snap {
 		Layout layout = new PatternLayout(LOG_LAYOUT);
 		root.addAppender(new ConsoleAppender(layout));
 		LOG.info("Console logging started");
-
-		String logFilePath = APP_DIR + LOG_FILE_NAME;
+		String logFileName = getLogFileName();
+		String logFilePath = Directories.LOGS + logFileName;
 		try {
 			root.addAppender(new FileAppender(layout, logFilePath));
 			LOG.info("File logging started");
@@ -63,26 +62,13 @@ public class Snap {
 		}
 	}
 
-	private static String getAppDir() {
-		String fileSeparator = System.getProperty("file.separator");
-		String osName = System.getProperty("os.name");
-
-		String path;
-		if (osName.toLowerCase().contains("win")) {
-			path = System.getenv("APPDATA");
-			path += fileSeparator + APP_NAME + fileSeparator;
-		} else {
-			path = System.getProperty("user.home");
-			path += fileSeparator + "." + APP_NAME + fileSeparator;
-		}
-
-		return path;
-	}
-
 	private static String getLogFileName() {
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat(LOG_FILE_DATE_FORMAT);
-		return sdf.format(cal.getTime()) + LOG_FILE_EXTENSION;
+		LOG.debug("Generating log file name");
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(LOG_FILE_DATE_FORMAT);
+		String logFileName = simpleDateFormat.format(calendar.getTime()) + LOG_FILE_EXTENSION;
+		LOG.debug("Log file name is: " + logFileName);
+		return logFileName;
 	}
 }
 
