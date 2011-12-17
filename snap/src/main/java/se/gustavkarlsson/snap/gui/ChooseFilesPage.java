@@ -17,7 +17,9 @@ import se.gustavkarlsson.snap.resources.Strings;
 import se.gustavkarlsson.snap.tree.Root;
 import se.gustavkarlsson.snap.tree.TreeContentProvider;
 import se.gustavkarlsson.snap.tree.TreeLabelProvider;
+import se.gustavkarlsson.snap.tree.filetree.FileComparator;
 import se.gustavkarlsson.snap.tree.filetree.FileNode;
+import se.gustavkarlsson.snap.tree.filetree.FileViewerComparator;
 import se.gustavkarlsson.snap.tree.filetree.FolderNode;
 
 public class ChooseFilesPage extends WizardPage {
@@ -56,14 +58,26 @@ public class ChooseFilesPage extends WizardPage {
 				1));
 		fileTreeViewer.setLabelProvider(new TreeLabelProvider());
 		fileTreeViewer.setContentProvider(new TreeContentProvider());
-		// TODO Sorter
+		fileTreeViewer.setComparator(new FileViewerComparator(new FileComparator()));
 		fileTreeViewer.setInput(fileTreeRoot);
 
 		// TODO Delete test code
 		FolderNode folder1 = new FolderNode(fileTreeRoot, "Folder 1.1");
 		folder1.addChild(new FolderNode(fileTreeRoot, "Folder 2.1"));
 		folder1.addChild(new FileNode(fileTreeRoot, new File(
+				"C:\\Windows\\Hin.ini")));
+		folder1.addChild(new FileNode(fileTreeRoot, new File(
+				"C:\\Windows\\hin.ini")));
+		folder1.addChild(new FileNode(fileTreeRoot, new File(
 				"C:\\Windows\\win.ini")));
+		folder1.addChild(new FileNode(fileTreeRoot, new File(
+				"C:\\Windows\\Win.ini")));
+		folder1.addChild(new FileNode(fileTreeRoot, new File(
+				"C:\\Windows\\win.ini")));
+		folder1.addChild(new FileNode(fileTreeRoot, new File(
+				"C:\\Windows\\hin.ini")));
+		folder1.addChild(new FileNode(fileTreeRoot, new File(
+				"C:\\Windows\\Hin.ini")));
 		folder1.addChild(new FolderNode(fileTreeRoot, "Folder 2.2"));
 		fileTreeRoot.addChild(folder1);
 		fileTreeRoot.addChild(new FileNode(fileTreeRoot, new File(
