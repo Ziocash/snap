@@ -10,6 +10,7 @@ public class FileViewerComparator extends ViewerComparator {
 		super();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public FileViewerComparator(Comparator comparator) {
 		super(comparator);
 	}

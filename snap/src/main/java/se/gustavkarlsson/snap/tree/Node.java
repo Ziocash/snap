@@ -1,14 +1,15 @@
 package se.gustavkarlsson.snap.tree;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import se.gustavkarlsson.snap.resources.Strings;
 
 public abstract class Node extends LeafNode implements Parent {
 
-	public Node(Root root) {
-		super(root);
-	}
-
-	private ArrayList<LeafNode> children = new ArrayList<LeafNode>();
+	private static final long serialVersionUID = 1L;
+	
+	private final Set<LeafNode> children = new HashSet<LeafNode>();
 
 	@Override
 	public LeafNode[] listChildren() {
@@ -17,19 +18,24 @@ public abstract class Node extends LeafNode implements Parent {
 	}
 
 	@Override
-	public void addChild(LeafNode child) {
-		if (root.getDecendants().contains(child)) {
-			throw new DuplicateTreeNodeException();
+	public boolean addChild(LeafNode child) {
+		if (child == null) {
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL + ": child");
 		}
-		child.setParent(this);
-		children.add(child);
-		root.getDecendants().add(child);
+		boolean added = children.add(child);
+		if (added) {
+			child.setParent(this);
+		}
+		return added;
 	}
 
 	@Override
-	public void removeChild(LeafNode child) {
-		child.remove();
-		children.remove(child);
+	public boolean removeChild(LeafNode child) {
+		boolean removed = children.remove(child);
+		if (removed) {
+			child.remove();
+		}
+		return removed;
 	}
 
 	@Override
@@ -40,19 +46,13 @@ public abstract class Node extends LeafNode implements Parent {
 	@Override
 	void remove() {
 		super.remove();
-
-		while (!children.isEmpty()) {
-			int index = children.size() - 1;
-			LeafNode child = children.get(index);
-
+		for (LeafNode child : children) {
 			if (child instanceof Node) {
 				((Node) child).remove();
 			} else {
 				child.remove();
 			}
-
-			children.remove(index);
 		}
-		children.trimToSize();
+		children.clear();
 	}
 }

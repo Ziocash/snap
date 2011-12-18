@@ -1,28 +1,20 @@
 package se.gustavkarlsson.snap.tree.filetree;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.eclipse.swt.graphics.Image;
 
 import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
 import se.gustavkarlsson.snap.tree.Label;
 import se.gustavkarlsson.snap.tree.Node;
-import se.gustavkarlsson.snap.tree.Root;
 
 public class FolderNode extends Node implements Label {
 
-	private String name;
+	private static final long serialVersionUID = 1L;
+	
+	private final String name;
 
-	public FolderNode(Root root, String name) {
-		super(root);
-		setName(name);
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
+	public FolderNode(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
 					+ ": name");
@@ -31,7 +23,32 @@ public class FolderNode extends Node implements Label {
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
 	public Image getImage() {
 		return Images.FOLDER;
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(23, 41).append(name).toHashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (Label.class.isAssignableFrom(obj.getClass())) {
+			Label other = (Label) obj;
+			return name.equals(other.getName());
+		}
+		return false;
 	}
 }

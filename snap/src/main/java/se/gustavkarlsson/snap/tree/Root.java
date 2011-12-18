@@ -1,14 +1,15 @@
 package se.gustavkarlsson.snap.tree;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import se.gustavkarlsson.snap.resources.Strings;
+
 public final class Root implements Parent {
 
-	private final Set<LeafNode> decendants = new HashSet<LeafNode>();
-
-	private final ArrayList<LeafNode> children = new ArrayList<LeafNode>();
+	private static final long serialVersionUID = 1L;
+	
+	private final Set<LeafNode> children = new HashSet<LeafNode>();
 
 	@Override
 	public LeafNode[] listChildren() {
@@ -17,28 +18,28 @@ public final class Root implements Parent {
 	}
 
 	@Override
-	public void addChild(LeafNode child) {
-		if (decendants.contains(child)) {
-			throw new DuplicateTreeNodeException();
+	public boolean addChild(LeafNode child) {
+		if (child == null) {
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL + ": child");
 		}
-		child.setParent(this);
-		children.add(child);
-		decendants.add(child);
+		boolean added = children.add(child);
+		if (added) {
+			child.setParent(this);
+		}
+		return added;
 	}
 
 	@Override
-	public void removeChild(LeafNode child) {
-		child.remove();
-		children.remove(child);
-		decendants.remove(child);
+	public boolean removeChild(LeafNode child) {
+		boolean removed = children.remove(child);
+		if (removed) {
+			child.remove();
+		}
+		return removed;
 	}
 
 	@Override
 	public boolean hasChildren() {
 		return !children.isEmpty();
-	}
-
-	Set<LeafNode> getDecendants() {
-		return decendants;
 	}
 }

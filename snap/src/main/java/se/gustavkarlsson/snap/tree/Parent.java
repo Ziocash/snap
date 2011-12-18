@@ -2,13 +2,13 @@ package se.gustavkarlsson.snap.tree;
 
 import java.io.Serializable;
 
-interface Parent extends Serializable {
+public interface Parent extends Serializable {
 
 	LeafNode[] listChildren();
 
-	void addChild(LeafNode child);
+	boolean addChild(LeafNode child);
 
-	void removeChild(LeafNode child);
+	boolean removeChild(LeafNode child);
 
 	boolean hasChildren();
 }
