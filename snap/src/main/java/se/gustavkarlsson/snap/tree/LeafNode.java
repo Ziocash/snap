@@ -8,7 +8,7 @@ public abstract class LeafNode implements Serializable {
 	
 	private Parent parent = null;
 
-	Parent getParent() {
+	public Parent getParent() {
 		return parent;
 	}
 
