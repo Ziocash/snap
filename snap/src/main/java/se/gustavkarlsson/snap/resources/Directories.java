@@ -2,7 +2,7 @@ package se.gustavkarlsson.snap.resources;
 
 public abstract class Directories {
 
-	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	public static final String APP_DATA = getAppDir() + "Snap" + FILE_SEPARATOR;
 	public static final String LOGS = APP_DATA + "logs" + FILE_SEPARATOR;
 	public static final String IMAGES = "src" + FILE_SEPARATOR + "main" + FILE_SEPARATOR + "resources" + FILE_SEPARATOR + "images" + FILE_SEPARATOR;

@@ -1,9 +1,10 @@
 package se.gustavkarlsson.snap.tree.filetree;
 
+import java.io.File;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.eclipse.swt.graphics.Image;
 
-import se.gustavkarlsson.snap.resources.Directories;
 import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
 import se.gustavkarlsson.snap.tree.Label;
@@ -12,26 +13,17 @@ import se.gustavkarlsson.snap.tree.LeafNode;
 public class FileNode extends LeafNode implements Label {
 
 	private static final long serialVersionUID = 1L;
+	
+	private String name;
+	private File file;
 
-	private final String name;
-	private final String path;
-
-	public FileNode(String path) {
-		this(path, path.substring(path.lastIndexOf(Directories.FILE_SEPARATOR) + 1));
+	public FileNode(File file) {
+		this(file, file.getName());
 	}
 
-	public FileNode(String path, String name) {
-		if (name == null) {
-			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
-					+ ": name");
-		}
-		if (path == null) {
-			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
-					+ ": path");
-		}
-
-		this.path = path;
-		this.name = name;
+	public FileNode(File file, String name) {
+		setFile(file);
+		setName(name);
 	}
 
 	@Override
@@ -39,8 +31,25 @@ public class FileNode extends LeafNode implements Label {
 		return name;
 	}
 
-	public String getPath() {
-		return path;
+	public void setName(String name) {
+		if (name == null) {
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
+					+ ": name");
+		}
+		this.name = name;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		if (file == null) {
+			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
+					+ ": file");
+		}
+
+		this.file = file;
 	}
 
 	@Override

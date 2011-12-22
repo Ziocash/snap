@@ -1,12 +1,11 @@
 package se.gustavkarlsson.snap.gui;
 
+import java.io.File;
+
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -20,7 +19,6 @@ import se.gustavkarlsson.snap.tree.TreeContentProvider;
 import se.gustavkarlsson.snap.tree.TreeLabelProvider;
 import se.gustavkarlsson.snap.tree.filetree.FileComparator;
 import se.gustavkarlsson.snap.tree.filetree.FileNode;
-import se.gustavkarlsson.snap.tree.filetree.FileTreeDropAdapter;
 import se.gustavkarlsson.snap.tree.filetree.FileViewerComparator;
 import se.gustavkarlsson.snap.tree.filetree.FolderNode;
 
@@ -60,26 +58,30 @@ public class ChooseFilesPage extends WizardPage {
 				1));
 		fileTreeViewer.setLabelProvider(new TreeLabelProvider());
 		fileTreeViewer.setContentProvider(new TreeContentProvider());
-		fileTreeViewer.setComparator(new FileViewerComparator(
-				new FileComparator()));
+		fileTreeViewer.setComparator(new FileViewerComparator(new FileComparator()));
 		fileTreeViewer.setInput(fileTreeRoot);
-
-		int operations = DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] { FileTransfer.getInstance() };
-		fileTreeViewer.addDropSupport(operations, transfers, new FileTreeDropAdapter(
-				fileTreeViewer));
 
 		// TODO Delete test code
 		FolderNode folder1 = new FolderNode("Folder 1.1");
 		folder1.addChild(new FolderNode("Folder 2.1"));
-		folder1.addChild(new FileNode("C:\\Windows\\Hin.ini"));
-		folder1.addChild(new FileNode("C:\\Windows\\Win.ini"));
-		folder1.addChild(new FileNode("C:\\Windows\\win.ini"));
-		folder1.addChild(new FileNode("C:\\Windows\\hin.ini"));
+		folder1.addChild(new FileNode(new File(
+				"C:\\Windows\\Hin.ini")));
+		folder1.addChild(new FileNode(new File(
+				"C:\\Windows\\hin.ini")));
+		folder1.addChild(new FileNode(new File(
+				"C:\\Windows\\win.ini")));
+		folder1.addChild(new FileNode(new File(
+				"C:\\Windows\\Win.ini")));
+		folder1.addChild(new FileNode(new File(
+				"C:\\Windows\\win.ini")));
+		folder1.addChild(new FileNode(new File(
+				"C:\\Windows\\hin.ini")));
+		folder1.addChild(new FileNode(new File(
+				"C:\\Windows\\Hin.ini")));
 		folder1.addChild(new FolderNode("Folder 2.2"));
 		fileTreeRoot.addChild(folder1);
-		fileTreeRoot.addChild(new FileNode("C:\\Windows\\win.ini",
-				"'Nother file"));
+		fileTreeRoot.addChild(new FileNode(new File(
+				"C:\\Windows\\win.ini"), "'Nother file"));
 		// TODO End delete test code
 
 		fileTreeViewer.refresh();
