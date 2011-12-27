@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.tree.filetree;
+package se.gustavkarlsson.snap.filetree;
 
 import java.io.File;
 
@@ -7,8 +7,6 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TransferData;
 
 import se.gustavkarlsson.snap.resources.Directories;
-import se.gustavkarlsson.snap.tree.LeafNode;
-import se.gustavkarlsson.snap.tree.Parent;
 
 public class FileTreeDropAdapter extends ViewerDropAdapter {
 
@@ -36,20 +34,20 @@ public class FileTreeDropAdapter extends ViewerDropAdapter {
 
 	@Override
 	public boolean performDrop(Object data) {
-		Parent targetParent;
+		FolderNode targetParent;
 		switch (getCurrentLocation()) {
 		case LOCATION_BEFORE:
-			targetParent = ((LeafNode) getCurrentTarget()).getParent();
+			targetParent = ((Node) getCurrentTarget()).getParent();
 			break;
 		case LOCATION_ON:
-			targetParent = (Parent) getCurrentTarget();
+			targetParent = (FolderNode) getCurrentTarget();
 			break;
 		case LOCATION_AFTER:
-			targetParent = ((LeafNode) getCurrentTarget()).getParent();
+			targetParent = ((Node) getCurrentTarget()).getParent();
 			break;
 		case LOCATION_NONE:
 			// Root
-			targetParent = (Parent) getViewer().getInput();
+			targetParent = (FolderNode) getViewer().getInput();
 			break;
 		default:
 			// TODO Error message
@@ -57,22 +55,22 @@ public class FileTreeDropAdapter extends ViewerDropAdapter {
 		}
 
 		String[] filePaths = (String[]) data;
-		
-		
+
 		for (String filePath : filePaths) {
 			addFileRecursively(targetParent, filePath);
 		}
 		getViewer().refresh();
 		return true;
 	}
-	
-	private static void addFileRecursively(Parent parent, String filePath) {
+
+	private static void addFileRecursively(FolderNode parent, String filePath) {
 		File file = new File(filePath);
-		
+
 		if (file.isFile()) {
 			parent.addChild(new FileNode(filePath));
 		} else {
-			FolderNode folder = new FolderNode(filePath.substring(filePath.lastIndexOf(Directories.FILE_SEPARATOR) + 1));
+			FolderNode folder = new FolderNode(filePath.substring(filePath
+					.lastIndexOf(Directories.FILE_SEPARATOR) + 1)); // TODO FILE_SEPARATOR really?
 			if (file.listFiles() == null) {
 				// TODO Error message (could not list)
 			} else {

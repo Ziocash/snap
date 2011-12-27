@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.tree;
+package se.gustavkarlsson.snap.filetree;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -18,7 +18,7 @@ public class TreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput == null || (newInput instanceof Root)) {
+		if (newInput == null || (newInput instanceof FolderNode)) {
 			return;
 		}
 		throw new IllegalArgumentException(Strings.ILLEGAL_ARGUMENT_TYPE + ": "
@@ -27,8 +27,8 @@ public class TreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object element) {
-		if (Parent.class.isAssignableFrom(element.getClass())) {
-			return ((Parent) element).listChildren();
+		if (element instanceof FolderNode) {
+			return ((FolderNode) element).listChildren();
 		}
 		throw new IllegalArgumentException(Strings.ILLEGAL_ARGUMENT_TYPE + ": "
 				+ element.getClass().getCanonicalName());
@@ -36,8 +36,8 @@ public class TreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object getParent(Object element) {
-		if (LeafNode.class.isAssignableFrom(element.getClass())) {
-			return ((LeafNode) element).getParent();
+		if (element instanceof Node) {
+			return ((Node) element).getParent();
 		}
 		throw new IllegalArgumentException(Strings.ILLEGAL_ARGUMENT_TYPE + ": "
 				+ element.getClass().getCanonicalName());
@@ -45,8 +45,8 @@ public class TreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if (Parent.class.isAssignableFrom(element.getClass())) {
-			return ((Parent) element).hasChildren();
+		if (element instanceof FolderNode) {
+			return ((FolderNode) element).hasChildren();
 		}
 		return false;
 	}

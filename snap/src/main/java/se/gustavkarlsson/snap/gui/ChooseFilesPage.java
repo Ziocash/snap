@@ -14,19 +14,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 
+import se.gustavkarlsson.snap.filetree.FileComparator;
+import se.gustavkarlsson.snap.filetree.FileTreeDropAdapter;
+import se.gustavkarlsson.snap.filetree.FileViewerComparator;
+import se.gustavkarlsson.snap.filetree.FolderNode;
+import se.gustavkarlsson.snap.filetree.TreeContentProvider;
+import se.gustavkarlsson.snap.filetree.TreeLabelProvider;
 import se.gustavkarlsson.snap.resources.Strings;
-import se.gustavkarlsson.snap.tree.Root;
-import se.gustavkarlsson.snap.tree.TreeContentProvider;
-import se.gustavkarlsson.snap.tree.TreeLabelProvider;
-import se.gustavkarlsson.snap.tree.filetree.FileComparator;
-import se.gustavkarlsson.snap.tree.filetree.FileNode;
-import se.gustavkarlsson.snap.tree.filetree.FileTreeDropAdapter;
-import se.gustavkarlsson.snap.tree.filetree.FileViewerComparator;
-import se.gustavkarlsson.snap.tree.filetree.FolderNode;
 
 public class ChooseFilesPage extends WizardPage {
 
-	private final Root fileTreeRoot = new Root();
+	private final FolderNode fileTreeRoot = new FolderNode("root");
 
 	private Button btnEnableAdvancedOptions;
 	private TreeViewer fileTreeViewer;
@@ -66,23 +64,8 @@ public class ChooseFilesPage extends WizardPage {
 
 		int operations = DND.DROP_MOVE;
 		Transfer[] transfers = new Transfer[] { FileTransfer.getInstance() };
-		fileTreeViewer.addDropSupport(operations, transfers, new FileTreeDropAdapter(
-				fileTreeViewer));
-
-		// TODO Delete test code
-		FolderNode folder1 = new FolderNode("Folder 1.1");
-		folder1.addChild(new FolderNode("Folder 2.1"));
-		folder1.addChild(new FileNode("C:\\Windows\\Hin.ini"));
-		folder1.addChild(new FileNode("C:\\Windows\\Win.ini"));
-		folder1.addChild(new FileNode("C:\\Windows\\win.ini"));
-		folder1.addChild(new FileNode("C:\\Windows\\hin.ini"));
-		folder1.addChild(new FolderNode("Folder 2.2"));
-		fileTreeRoot.addChild(folder1);
-		fileTreeRoot.addChild(new FileNode("C:\\Windows\\win.ini",
-				"'Nother file"));
-		// TODO End delete test code
-
-		fileTreeViewer.refresh();
+		fileTreeViewer.addDropSupport(operations, transfers,
+				new FileTreeDropAdapter(fileTreeViewer));
 
 		btnEnableAdvancedOptions = new Button(container, SWT.CHECK);
 		btnEnableAdvancedOptions.setText("Enable Advanced Options");
@@ -90,7 +73,7 @@ public class ChooseFilesPage extends WizardPage {
 
 	@Override
 	public boolean canFlipToNextPage() {
-		return fileTreeRoot.hasChildren();
+		return fileTreeRoot.hasChildren(); // TODO needs update when modifying tree
 	}
 
 	@Override

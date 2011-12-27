@@ -1,40 +1,43 @@
-package se.gustavkarlsson.snap.tree.filetree;
+package se.gustavkarlsson.snap.filetree;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.eclipse.swt.graphics.Image;
 
-import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
-import se.gustavkarlsson.snap.tree.Label;
-import se.gustavkarlsson.snap.tree.Node;
 
-public class FolderNode extends Node implements Label {
+public abstract class Node implements Label {
 
-	private static final long serialVersionUID = 1L;
-	
 	private final String name;
 
-	public FolderNode(String name) {
+	private FolderNode parent = null;
+
+	public Node(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
 					+ ": name");
 		}
+
 		this.name = name;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
-	public Image getImage() {
-		return Images.FOLDER;
+	public boolean hasParent() {
+		return (parent != null);
+	}
+
+	public FolderNode getParent() {
+		return parent;
+	}
+
+	void setParent(FolderNode parent) {
+		this.parent = parent;
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(23, 41).append(name).toHashCode();
+		return new HashCodeBuilder(17, 31).append(name).toHashCode();
 	}
 
 	@Override
@@ -45,7 +48,7 @@ public class FolderNode extends Node implements Label {
 		if (obj == this) {
 			return true;
 		}
-		if (Label.class.isAssignableFrom(obj.getClass())) {
+		if (obj instanceof Label) { // TODO is instanceof enough??
 			Label other = (Label) obj;
 			return name.equals(other.getName());
 		}

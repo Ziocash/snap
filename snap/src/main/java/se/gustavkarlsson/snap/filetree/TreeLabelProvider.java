@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.tree;
+package se.gustavkarlsson.snap.filetree;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
