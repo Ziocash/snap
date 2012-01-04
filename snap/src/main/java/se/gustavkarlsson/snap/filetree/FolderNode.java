@@ -3,14 +3,34 @@ package se.gustavkarlsson.snap.filetree;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
 import org.eclipse.swt.graphics.Image;
 
 import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
 
+@Entity(name = "Folders")
 public class FolderNode extends Node implements Label {
 
-	private final Set<Node> children = new HashSet<Node>();
+	@SuppressWarnings("unused")
+	@Column(name = "FolderID")
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<Node> children = new HashSet<Node>();
+
+	public FolderNode() {
+	}
 
 	public FolderNode(String name) {
 		super(name);

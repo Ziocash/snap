@@ -1,14 +1,28 @@
 package se.gustavkarlsson.snap.filetree;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import se.gustavkarlsson.snap.resources.Strings;
 
+@MappedSuperclass
 public abstract class Node implements Label {
 
-	private final String name;
+	@Column(name = "Name", nullable = false)
+	private String name;
 
+	@Column(name = "Parent_FK")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "FolderID", nullable = true)
 	private FolderNode parent = null;
+
+	public Node() {
+	}
 
 	public Node(String name) {
 		if (name == null) {
