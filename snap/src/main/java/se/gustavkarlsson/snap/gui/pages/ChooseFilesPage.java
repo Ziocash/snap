@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.gui;
+package se.gustavkarlsson.snap.gui.pages;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -14,12 +14,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 
-import se.gustavkarlsson.snap.filetree.FileComparator;
-import se.gustavkarlsson.snap.filetree.FileTreeDropAdapter;
-import se.gustavkarlsson.snap.filetree.FileViewerComparator;
-import se.gustavkarlsson.snap.filetree.FolderNode;
-import se.gustavkarlsson.snap.filetree.TreeContentProvider;
-import se.gustavkarlsson.snap.filetree.TreeLabelProvider;
+import se.gustavkarlsson.snap.domain.FolderNode;
+import se.gustavkarlsson.snap.gui.util.filetree.FileComparator;
+import se.gustavkarlsson.snap.gui.util.filetree.FileTreeDropAdapter;
+import se.gustavkarlsson.snap.gui.util.filetree.FileViewerComparator;
+import se.gustavkarlsson.snap.gui.util.filetree.TreeContentProvider;
+import se.gustavkarlsson.snap.gui.util.filetree.TreeLabelProvider;
 import se.gustavkarlsson.snap.resources.Strings;
 
 public class ChooseFilesPage extends WizardPage {

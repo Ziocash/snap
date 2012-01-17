@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.filetree;
+package se.gustavkarlsson.snap.domain;
 
 import org.eclipse.swt.graphics.Image;
 

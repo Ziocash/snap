@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.filetree;
+package se.gustavkarlsson.snap.gui.util.filetree;
 
 import java.io.File;
 
@@ -6,6 +6,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TransferData;
 
+import se.gustavkarlsson.snap.domain.FileNode;
+import se.gustavkarlsson.snap.domain.FolderNode;
+import se.gustavkarlsson.snap.domain.Node;
 import se.gustavkarlsson.snap.resources.Directories;
 
 public class FileTreeDropAdapter extends ViewerDropAdapter {

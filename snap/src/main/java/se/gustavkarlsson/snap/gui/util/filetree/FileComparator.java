@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.filetree;
+package se.gustavkarlsson.snap.gui.util.filetree;
 
 import java.util.Comparator;
 

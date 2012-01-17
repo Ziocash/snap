@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.gui;
+package se.gustavkarlsson.snap.gui.pages;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;

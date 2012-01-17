@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.filetree;
+package se.gustavkarlsson.snap.domain;
 
 import java.util.HashSet;
 import java.util.Set;

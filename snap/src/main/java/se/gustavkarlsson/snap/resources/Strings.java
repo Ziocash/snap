@@ -23,4 +23,6 @@ public abstract class Strings {
 	
 	public static final String ADVANCED_OPTIONS_PAGE_TITLE = "Advanced Options";
 	public static final String ADVANCED_OPTIONS_PAGE_DESCRIPTION = "Set advanced options.";
+	
+	public static final String SESSION_FILE_FILTER_DESCRIPTION = Snap.APP_NAME + " session files";
 }

@@ -1,8 +1,9 @@
-package se.gustavkarlsson.snap.filetree;
+package se.gustavkarlsson.snap.gui.util.filetree;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+import se.gustavkarlsson.snap.domain.Label;
 import se.gustavkarlsson.snap.resources.Strings;
 
 public class TreeLabelProvider extends LabelProvider {

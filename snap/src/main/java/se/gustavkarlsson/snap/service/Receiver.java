@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.main;
+package se.gustavkarlsson.snap.service;
 
 import java.io.IOException;
 import java.net.BindException;

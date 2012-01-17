@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.filetree;
+package se.gustavkarlsson.snap.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
