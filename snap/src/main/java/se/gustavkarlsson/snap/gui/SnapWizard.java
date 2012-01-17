@@ -5,6 +5,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 import se.gustavkarlsson.snap.gui.pages.AdvancedOptionsPage;
 import se.gustavkarlsson.snap.gui.pages.ChooseFilesPage;
+import se.gustavkarlsson.snap.gui.pages.ChooseSessionPage;
 import se.gustavkarlsson.snap.gui.pages.WelcomePage;
 import se.gustavkarlsson.snap.main.Snap;
 import se.gustavkarlsson.snap.session.SessionManager;
@@ -23,9 +24,10 @@ public class SnapWizard extends Wizard {
 	@Override
 	public void addPages() {
 		LOG.debug("Adding pages to Wizard");
-		addPage(new WelcomePage(sessionManager));
+		addPage(new WelcomePage());
 
 		// Sender
+		addPage(new ChooseSessionPage(sessionManager));
 		addPage(new ChooseFilesPage());
 		addPage(new AdvancedOptionsPage());
 

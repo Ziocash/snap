@@ -17,9 +17,11 @@ public abstract class Strings {
 	public static final String WELCOME_PAGE_TITLE = "Welcome to " + Snap.APP_NAME;
 	public static final String WELCOME_PAGE_DESCRIPTION = "Send or Receive?";
 	
+	public static final String CHOOSE_SESSION_PAGE_TITLE = "Choose Session";
+	public static final String CHOOSE_SESSION_PAGE_DESCRIPTION = "Select a session to resume.";
+	
 	public static final String CHOOSE_FILES_PAGE_TITLE = "Choose Files";
 	public static final String CHOOSE_FILES_PAGE_DESCRIPTION = "Use the \"Browse\" button or by drag and drop from your OS.";
-	
 	
 	public static final String ADVANCED_OPTIONS_PAGE_TITLE = "Advanced Options";
 	public static final String ADVANCED_OPTIONS_PAGE_DESCRIPTION = "Set advanced options.";

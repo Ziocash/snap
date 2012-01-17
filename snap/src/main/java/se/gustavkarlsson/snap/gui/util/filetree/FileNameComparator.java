@@ -2,7 +2,7 @@ package se.gustavkarlsson.snap.gui.util.filetree;
 
 import java.util.Comparator;
 
-public class FileComparator implements Comparator<String> {
+public class FileNameComparator implements Comparator<String> {
 
 	@Override
 	public int compare(String o1, String o2) {

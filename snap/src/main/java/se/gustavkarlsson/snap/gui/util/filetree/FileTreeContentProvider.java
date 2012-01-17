@@ -7,7 +7,7 @@ import se.gustavkarlsson.snap.domain.FolderNode;
 import se.gustavkarlsson.snap.domain.Node;
 import se.gustavkarlsson.snap.resources.Strings;
 
-public class TreeContentProvider implements ITreeContentProvider {
+public class FileTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getElements(Object element) {

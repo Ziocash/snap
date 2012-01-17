@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
 import se.gustavkarlsson.snap.domain.Label;
 import se.gustavkarlsson.snap.resources.Strings;
 
-public class TreeLabelProvider extends LabelProvider {
+public class FileTreeLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {

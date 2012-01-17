@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.gui.util.filetree;
+package se.gustavkarlsson.snap.gui.util;
 
 import java.io.File;
 

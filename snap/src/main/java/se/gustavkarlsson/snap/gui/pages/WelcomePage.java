@@ -1,8 +1,5 @@
 package se.gustavkarlsson.snap.gui.pages;
 
-import java.awt.Container;
-
-import org.apache.log4j.Logger;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -14,23 +11,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import se.gustavkarlsson.snap.resources.Strings;
-import se.gustavkarlsson.snap.session.SessionManager;
-import se.gustavkarlsson.snap.util.LoggerHelper;
 
 public class WelcomePage extends WizardPage {
-	
-	private static final Logger LOG = LoggerHelper.getLogger();
-	
-	private final SessionManager sessionManager;
-	
-	private Button btnSend;
-	private Button btnSendFromSession;
-	private Button btnReceive;
-	
 
-	public WelcomePage(SessionManager sessionManager) {
+	private Button sendButton;
+	private Button sendFromSessionButton;
+	private Button receiveButton;
+
+	public WelcomePage() {
 		super(WelcomePage.class.getName());
-		this.sessionManager = sessionManager;
 		setTitle(Strings.WELCOME_PAGE_TITLE);
 		setDescription(Strings.WELCOME_PAGE_DESCRIPTION);
 	}
@@ -41,56 +30,52 @@ public class WelcomePage extends WizardPage {
 		setControl(container);
 		container.setLayout(new GridLayout(1, false));
 
-		Label lblQuestion = new Label(container, SWT.NONE);
-		lblQuestion.setText("Do you want to send or receive files?");
-		
+		Label questionLabel = new Label(container, SWT.NONE);
+		questionLabel.setText("Do you want to send or receive files?");
+
 		RadioButtonSelectedListener radioButtonSelectedListener = new RadioButtonSelectedListener();
 
-		btnSend = new Button(container, SWT.RADIO);
-		btnSend.addSelectionListener(radioButtonSelectedListener);
-		btnSend.setText("&Send files");
+		sendButton = new Button(container, SWT.RADIO);
+		sendButton.addSelectionListener(radioButtonSelectedListener);
+		sendButton.setText("&Send files");
 
-		btnReceive = new Button(container, SWT.RADIO);
-		btnReceive.addSelectionListener(radioButtonSelectedListener);
-		btnReceive.setText("&Receive files");
-		
-		btnSendFromSession = new Button(container, SWT.RADIO);
-		btnSendFromSession.addSelectionListener(radioButtonSelectedListener);
-		btnSendFromSession.setText("Send files from previous s&ession");
+		sendFromSessionButton = new Button(container, SWT.RADIO);
+		sendFromSessionButton.addSelectionListener(radioButtonSelectedListener);
+		sendFromSessionButton.setText("Send files from previous s&ession");
+
+		receiveButton = new Button(container, SWT.RADIO);
+		receiveButton.addSelectionListener(radioButtonSelectedListener);
+		receiveButton.setText("&Receive files");
 	}
-	
+
+	@Override
+	public boolean isPageComplete() {
+		return (sendButton.getSelection()
+				|| sendFromSessionButton.getSelection() || receiveButton
+					.getSelection());
+	}
+
 	@Override
 	public boolean canFlipToNextPage() {
-		return (btnSend.getSelection()
-				|| btnReceive.getSelection()
-				|| btnSendFromSession.getSelection());
+		return isPageComplete() && getNextPage() != null;
 	}
 
-	
 	@Override
 	public IWizardPage getNextPage() {
-		if (btnSend.getSelection()) {
+		if (sendButton.getSelection()) {
 			return getWizard().getPage(ChooseFilesPage.class.getName());
-		} else if (btnReceive.getSelection()) {
-			return null; // TODO return Select session page
-		} else if (btnSendFromSession.getSelection()) {
-			return null; // TODO return Receive page
+		} else if (sendFromSessionButton.getSelection()) {
+			return getWizard().getPage(ChooseSessionPage.class.getName());
+		} else if (receiveButton.getSelection()) {
+			// TODO return Select session page
 		}
-		LOG.error("No button selected for next page");
 		return null;
 	}
-	
+
 	private class RadioButtonSelectedListener extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			getWizard().getContainer().updateButtons();
 		}
-	}
-	
-	@Override
-	public void setVisible(boolean visible) {
-		sessionManager.update();
-		btnSendFromSession.setVisible(!sessionManager.getSessions().isEmpty());
-		super.setVisible(visible);
 	}
 }

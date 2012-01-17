@@ -7,14 +7,14 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import se.gustavkarlsson.snap.domain.FileNode;
 import se.gustavkarlsson.snap.domain.FolderNode;
 
-public class FileViewerComparator extends ViewerComparator {
+public class FileTreeViewerComparator extends ViewerComparator {
 
-	public FileViewerComparator() {
+	public FileTreeViewerComparator() {
 		super();
 	}
 
 	@SuppressWarnings("rawtypes")
-	public FileViewerComparator(Comparator comparator) {
+	public FileTreeViewerComparator(Comparator comparator) {
 		super(comparator);
 	}
 
