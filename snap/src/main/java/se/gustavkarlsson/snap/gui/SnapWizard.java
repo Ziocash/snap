@@ -24,11 +24,11 @@ public class SnapWizard extends Wizard {
 	@Override
 	public void addPages() {
 		LOG.debug("Adding pages to Wizard");
-		addPage(new WelcomePage());
+		addPage(new WelcomePage(service.getSessionManager()));
 
 		// Sender
 		addPage(new ChooseSessionPage(service.getSessionManager()));
-		addPage(new ChooseFilesPage());
+		addPage(new ChooseFilesPage(service.getSessionManager()));
 		addPage(new AdvancedOptionsPage());
 
 		// Receiver

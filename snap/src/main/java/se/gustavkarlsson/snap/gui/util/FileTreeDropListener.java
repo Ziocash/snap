@@ -9,12 +9,17 @@ import org.eclipse.swt.dnd.TransferData;
 import se.gustavkarlsson.snap.domain.FileNode;
 import se.gustavkarlsson.snap.domain.FolderNode;
 import se.gustavkarlsson.snap.domain.Node;
+import se.gustavkarlsson.snap.gui.pages.ChooseFilesPage;
 import se.gustavkarlsson.snap.resources.Directories;
 
-public class FileTreeDropAdapter extends ViewerDropAdapter {
+public class FileTreeDropListener extends ViewerDropAdapter {
+	
+	private ChooseFilesPage chooseFilesPage;
 
-	public FileTreeDropAdapter(TreeViewer viewer) {
+	public FileTreeDropListener(ChooseFilesPage chooseFilesPage, TreeViewer viewer) {
 		super(viewer);
+		
+		this.chooseFilesPage = chooseFilesPage;
 	}
 
 	@Override
@@ -63,6 +68,7 @@ public class FileTreeDropAdapter extends ViewerDropAdapter {
 			addFileRecursively(targetParent, filePath);
 		}
 		getViewer().refresh();
+		chooseFilesPage.getWizard().getContainer().updateButtons();
 		return true;
 	}
 

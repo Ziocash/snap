@@ -13,7 +13,6 @@ import org.apache.log4j.PatternLayout;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 import se.gustavkarlsson.snap.gui.SnapWizard;
 import se.gustavkarlsson.snap.resources.Directories;
@@ -39,16 +38,16 @@ public class Snap {
 	private static void runWizard() {
 		LOG.info("Creating service");
 		Service service = new Service();
-		
+
 		LOG.info("Creating GUI");
 		Display.getDefault();
 		Wizard wizard = new SnapWizard(service);
 		WizardDialog dialog = new WizardDialog(null, wizard);
 		dialog.create();
-		
+
 		LOG.info("Opening GUI");
 		dialog.open();
-		
+
 		LOG.info("GUI closed");
 	}
 
@@ -72,8 +71,10 @@ public class Snap {
 	private static String getLogFileName() {
 		LOG.debug("Generating log file name");
 		Calendar calendar = Calendar.getInstance();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(LOG_FILE_DATE_FORMAT);
-		String logFileName = simpleDateFormat.format(calendar.getTime()) + LOG_FILE_EXTENSION;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+				LOG_FILE_DATE_FORMAT);
+		String logFileName = simpleDateFormat.format(calendar.getTime())
+				+ LOG_FILE_EXTENSION;
 		LOG.debug("Log file name is: " + logFileName);
 		return logFileName;
 	}

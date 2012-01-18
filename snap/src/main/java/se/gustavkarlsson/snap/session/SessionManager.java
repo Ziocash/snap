@@ -13,9 +13,31 @@ public class SessionManager {
 	private final FileFilter sessionFilter = new SessionFilter();
 
 	private List<File> sessions = new ArrayList<File>();
+	private File currentSession = null;
+	private boolean sessionChanged = false;
 
 	public List<File> getSessions() {
 		return sessions;
+	}
+	
+	public File getCurrentSession() {
+		return currentSession;
+	}
+	
+	public void setCurrentSession(File session) {
+		currentSession = session;
+	}
+	
+	public boolean hasCurrentSession() {
+		return currentSession != null;
+	}
+
+	public boolean hasSessionChanged() {
+		return sessionChanged;
+	}
+
+	public void setSessionChanged(boolean sessionChanged) {
+		this.sessionChanged = sessionChanged;
 	}
 
 	public void update() {
@@ -33,8 +55,8 @@ public class SessionManager {
 		private final String EXTENSION = ".odb";
 
 		@Override
-		public boolean accept(File pathName) {
-			return pathName.getName().endsWith(EXTENSION);
+		public boolean accept(File file) {
+			return file.isFile() && file.getName().endsWith(EXTENSION);
 		}
 	}
 }

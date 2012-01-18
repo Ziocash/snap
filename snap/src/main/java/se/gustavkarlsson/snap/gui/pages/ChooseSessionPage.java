@@ -26,8 +26,6 @@ public class ChooseSessionPage extends WizardPage {
 	private ListViewer sessionListViewer;
 	private Button deleteButton;
 
-	private File selectedSession = null;
-
 	/**
 	 * Create the wizard.
 	 */
@@ -82,7 +80,7 @@ public class ChooseSessionPage extends WizardPage {
 
 	@Override
 	public boolean isPageComplete() {
-		return (selectedSession != null);
+		return (sessionManager.getCurrentSession() != null);
 	}
 
 	@Override
@@ -90,8 +88,24 @@ public class ChooseSessionPage extends WizardPage {
 		return isPageComplete() && getNextPage() != null;
 	}
 
-	File getSelectedSession() {
-		return selectedSession;
+	private void refreshSessions() {
+		sessionManager.update();
+		List<File> newSessions = sessionManager.getSessions();
+		if (!newSessions.equals(sessionListViewer.getInput())) {
+			sessionListViewer.setInput(newSessions);
+		}
+	}
+
+	private void updateSelectedSession() {
+		int selectedIndex = sessionListViewer.getList().getSelectionIndex();
+		File selectedSession = selectedIndex == -1 ? null : sessionManager
+				.getSessions().get(selectedIndex);
+		sessionManager.setCurrentSession(selectedSession);
+		sessionManager.setSessionChanged(true);
+		
+		deleteButton.setEnabled(sessionManager.hasCurrentSession());
+	
+		getWizard().getContainer().updateButtons();
 	}
 
 	private class RefreshSessionsListener extends SelectionAdapter {
@@ -105,7 +119,7 @@ public class ChooseSessionPage extends WizardPage {
 	private class DeleteSessionListener extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			selectedSession.delete(); // TODO Confirm, and show error message if failed
+			sessionManager.getCurrentSession().delete(); // TODO Confirm, and show error message if failed
 			refreshSessions();
 			updateSelectedSession();
 		}
@@ -115,23 +129,6 @@ public class ChooseSessionPage extends WizardPage {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			updateSelectedSession();
-		}
-	}
-
-	private void updateSelectedSession() {
-		int selectedIndex = sessionListViewer.getList().getSelectionIndex();
-		selectedSession = selectedIndex == -1 ? null : sessionManager
-				.getSessions().get(selectedIndex);
-		deleteButton.setEnabled(selectedSession != null);
-
-		getWizard().getContainer().updateButtons();
-	}
-
-	private void refreshSessions() {
-		sessionManager.update();
-		List<File> newSessions = sessionManager.getSessions();
-		if (!newSessions.equals(sessionListViewer.getInput())) {
-			sessionListViewer.setInput(newSessions);
 		}
 	}
 }

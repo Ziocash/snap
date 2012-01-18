@@ -14,12 +14,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 
 import se.gustavkarlsson.snap.domain.FolderNode;
-import se.gustavkarlsson.snap.gui.util.FileTreeDropAdapter;
+import se.gustavkarlsson.snap.gui.util.FileTreeDropListener;
 import se.gustavkarlsson.snap.gui.util.filetree.FileNameComparator;
 import se.gustavkarlsson.snap.gui.util.filetree.FileTreeContentProvider;
 import se.gustavkarlsson.snap.gui.util.filetree.FileTreeLabelProvider;
 import se.gustavkarlsson.snap.gui.util.filetree.FileTreeViewerComparator;
+import se.gustavkarlsson.snap.persistance.PersistanceManager;
 import se.gustavkarlsson.snap.resources.Strings;
+import se.gustavkarlsson.snap.session.SessionManager;
 
 public class ChooseFilesPage extends WizardPage {
 
@@ -28,13 +30,17 @@ public class ChooseFilesPage extends WizardPage {
 	private Button enableAdvancedOptionsButton;
 	private TreeViewer fileTreeViewer;
 
+	private SessionManager sessionManager;
+
 	/**
 	 * Create the wizard.
 	 */
-	public ChooseFilesPage() {
+	public ChooseFilesPage(SessionManager sessionManager) {
 		super(ChooseFilesPage.class.getName());
 		setTitle(Strings.CHOOSE_FILES_PAGE_TITLE);
 		setDescription(Strings.CHOOSE_FILES_PAGE_DESCRIPTION);
+
+		this.sessionManager = sessionManager;
 	}
 
 	/**
@@ -61,16 +67,39 @@ public class ChooseFilesPage extends WizardPage {
 		int operations = DND.DROP_MOVE;
 		Transfer[] transfers = new Transfer[] { FileTransfer.getInstance() };
 		fileTreeViewer.addDropSupport(operations, transfers,
-				new FileTreeDropAdapter(fileTreeViewer));
+				new FileTreeDropListener(this, fileTreeViewer));
 
 		enableAdvancedOptionsButton = new Button(container, SWT.CHECK);
 		enableAdvancedOptionsButton.setText("Enable Advanced Options");
 	}
 
 	@Override
+	public void setVisible(boolean visible) {
+		if (visible) {
+			if (sessionManager.hasCurrentSession()
+					&& sessionManager.hasSessionChanged()) {
+				if (!((FolderNode) fileTreeViewer.getInput()).hasChildren()) {
+					// Tree is empty
+					PersistanceManager persistanceManager = new PersistanceManager(sessionManager.getCurrentSession().getPath());
+					fileTreeViewer.setInput(persistanceManager.getRoot());
+					System.out.println("");
+				} else {
+					// ask if load
+				}
+				sessionManager.setSessionChanged(false);
+			}
+		}
+		super.setVisible(visible);
+	}
+
+	@Override
+	public boolean isPageComplete() {
+		return fileTreeRoot.hasChildren();
+	}
+
+	@Override
 	public boolean canFlipToNextPage() {
-		return fileTreeRoot.hasChildren(); // TODO needs update when modifying
-											// tree
+		return isPageComplete() && getNextPage() != null;
 	}
 
 	@Override

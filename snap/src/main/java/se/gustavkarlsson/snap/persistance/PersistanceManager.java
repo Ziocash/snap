@@ -5,6 +5,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
+import se.gustavkarlsson.snap.domain.FolderNode;
+
 public class PersistanceManager {
 
 	private final EntityManager em;
@@ -13,7 +15,7 @@ public class PersistanceManager {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory(pathToDb);
 		em = emf.createEntityManager();
-		emf.close();
+		// TODO don't forget to close emf (and em?)
 	}
 
 	public <T> Object save(T object) {
@@ -33,6 +35,11 @@ public class PersistanceManager {
 
 	public <T> Object getSingleObject(String queryString, Class<T> clazz) {
 		TypedQuery<T> query = em.createQuery(queryString, clazz);
+		return query.getSingleResult();
+	}
+	
+	public FolderNode getRoot() {
+		TypedQuery<FolderNode> query = em.createQuery("SELECT DISTINCT node FROM FolderNode node WHERE node.parent = null", FolderNode.class);
 		return query.getSingleResult();
 	}
 

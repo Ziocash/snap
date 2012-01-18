@@ -11,17 +11,22 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import se.gustavkarlsson.snap.resources.Strings;
+import se.gustavkarlsson.snap.session.SessionManager;
 
 public class WelcomePage extends WizardPage {
 
+	private final SessionManager sessionManager;
+	
 	private Button sendButton;
 	private Button sendFromSessionButton;
 	private Button receiveButton;
 
-	public WelcomePage() {
+	public WelcomePage(SessionManager sessionManager ) {
 		super(WelcomePage.class.getName());
 		setTitle(Strings.WELCOME_PAGE_TITLE);
 		setDescription(Strings.WELCOME_PAGE_DESCRIPTION);
+		
+		this.sessionManager = sessionManager;
 	}
 
 	public void createControl(Composite parent) {
@@ -46,6 +51,14 @@ public class WelcomePage extends WizardPage {
 		receiveButton = new Button(container, SWT.RADIO);
 		receiveButton.addSelectionListener(radioButtonSelectedListener);
 		receiveButton.setText("&Receive files");
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		if (visible) {
+			sessionManager.setCurrentSession(null);
+		}
+		super.setVisible(visible);
 	}
 
 	@Override
