@@ -24,6 +24,9 @@ public class ChooseSessionPage extends WizardPage {
 
 	private final SessionManager sessionManager;
 	private ListViewer sessionListViewer;
+	private Button deleteButton;
+
+	private File selectedSession = null;
 
 	/**
 	 * Create the wizard.
@@ -45,59 +48,90 @@ public class ChooseSessionPage extends WizardPage {
 		Composite container = new Composite(parent, SWT.NULL);
 
 		setControl(container);
-		container.setLayout(new GridLayout(1, false));
+		container.setLayout(new GridLayout(2, false));
 
 		sessionListViewer = new ListViewer(container, SWT.BORDER | SWT.V_SCROLL);
-		org.eclipse.swt.widgets.List sessionList = sessionListViewer.getList();
-		sessionList.addSelectionListener(new SessionSelectedListener());
-		sessionList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
-				1, 1));
 		sessionListViewer.setContentProvider(new ArrayContentProvider());
 		sessionListViewer.setLabelProvider(new FileLabelProvider());
 		sessionListViewer.setComparator(new ViewerComparator(
 				new FileNameComparator()));
+		org.eclipse.swt.widgets.List sessionList = sessionListViewer.getList();
+		sessionList.addSelectionListener(new SessionSelectedListener());
+		sessionList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+				2, 1));
 
 		Button refreshButton = new Button(container, SWT.NONE);
 		refreshButton.addSelectionListener(new RefreshSessionsListener());
 		refreshButton.setText("&Refresh");
+
+		deleteButton = new Button(container, SWT.NONE);
+		deleteButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false, 1, 1));
+		deleteButton.addSelectionListener(new DeleteSessionListener());
+		deleteButton.setText("&Delete");
 	}
 
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
-			sessionManager.update();
-			sessionListViewer.setInput(sessionManager.getSessions());
+			refreshSessions();
+			updateSelectedSession();
 		}
 		super.setVisible(visible);
 	}
 
 	@Override
 	public boolean isPageComplete() {
-		return (!sessionListViewer.getSelection().isEmpty());
+		return (selectedSession != null);
 	}
-	
+
 	@Override
 	public boolean canFlipToNextPage() {
 		return isPageComplete() && getNextPage() != null;
 	}
 
+	File getSelectedSession() {
+		return selectedSession;
+	}
+
 	private class RefreshSessionsListener extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			sessionManager.update();
-			List<File> newSessions = sessionManager.getSessions();
-			if (!newSessions.equals(sessionListViewer.getInput())) {
-				sessionListViewer.setInput(newSessions);
-			}
-			
-			getWizard().getContainer().updateButtons();
+			refreshSessions();
+			updateSelectedSession();
 		}
 	}
-	
+
+	private class DeleteSessionListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			selectedSession.delete(); // TODO Confirm, and show error message if failed
+			refreshSessions();
+			updateSelectedSession();
+		}
+	}
+
 	private class SessionSelectedListener extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			getWizard().getContainer().updateButtons();
+			updateSelectedSession();
+		}
+	}
+
+	private void updateSelectedSession() {
+		int selectedIndex = sessionListViewer.getList().getSelectionIndex();
+		selectedSession = selectedIndex == -1 ? null : sessionManager
+				.getSessions().get(selectedIndex);
+		deleteButton.setEnabled(selectedSession != null);
+
+		getWizard().getContainer().updateButtons();
+	}
+
+	private void refreshSessions() {
+		sessionManager.update();
+		List<File> newSessions = sessionManager.getSessions();
+		if (!newSessions.equals(sessionListViewer.getInput())) {
+			sessionListViewer.setInput(newSessions);
 		}
 	}
 }
