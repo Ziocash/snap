@@ -82,7 +82,6 @@ public class ChooseFilesPage extends WizardPage {
 					// Tree is empty
 					PersistanceManager persistanceManager = new PersistanceManager(sessionManager.getCurrentSession().getPath());
 					fileTreeViewer.setInput(persistanceManager.getRoot());
-					System.out.println("");
 				} else {
 					// ask if load
 				}

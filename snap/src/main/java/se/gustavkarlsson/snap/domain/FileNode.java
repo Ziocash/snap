@@ -15,7 +15,6 @@ import se.gustavkarlsson.snap.resources.Strings;
 @Entity(name = "Files")
 public class FileNode extends Node {
 
-	@SuppressWarnings("unused")
 	@Column(name = "FileID")
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,8 +43,20 @@ public class FileNode extends Node {
 		this.path = path;
 	}
 
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	public String getPath() {
 		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 	@Override

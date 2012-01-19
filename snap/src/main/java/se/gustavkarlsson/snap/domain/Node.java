@@ -37,6 +37,10 @@ public abstract class Node implements Label {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public boolean hasParent() {
 		return (parent != null);
 	}

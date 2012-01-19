@@ -20,7 +20,6 @@ import se.gustavkarlsson.snap.resources.Strings;
 @Entity(name = "Folders")
 public class FolderNode extends Node implements Label {
 
-	@SuppressWarnings("unused")
 	@Column(name = "FolderID")
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -65,6 +64,22 @@ public class FolderNode extends Node implements Label {
 
 	public void removeAllChildren() {
 		children.clear();
+	}
+	
+	public Set<Node> getChildren() {
+		return children;
+	}
+	
+	public void setChildren(Set<Node> children) {
+		this.children = children;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	@Override

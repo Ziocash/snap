@@ -1,5 +1,7 @@
 package se.gustavkarlsson.snap.persistance;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -9,13 +11,12 @@ import se.gustavkarlsson.snap.domain.FolderNode;
 
 public class PersistanceManager {
 
+	private final EntityManagerFactory emf;
 	private final EntityManager em;
 
 	public PersistanceManager(String pathToDb) {
-		EntityManagerFactory emf = Persistence
-				.createEntityManagerFactory(pathToDb);
+		emf = Persistence.createEntityManagerFactory(pathToDb);
 		em = emf.createEntityManager();
-		// TODO don't forget to close emf (and em?)
 	}
 
 	public <T> Object save(T object) {
@@ -37,10 +38,16 @@ public class PersistanceManager {
 		TypedQuery<T> query = em.createQuery(queryString, clazz);
 		return query.getSingleResult();
 	}
-	
-	public FolderNode getRoot() {
-		TypedQuery<FolderNode> query = em.createQuery("SELECT DISTINCT node FROM FolderNode node WHERE node.parent = null", FolderNode.class);
-		return query.getSingleResult();
+
+	public FolderNode getRoot() { // FIXME get real root
+		TypedQuery<FolderNode> query = em.createQuery(
+				"SELECT f FROM Folders f", FolderNode.class);
+		List<FolderNode> result = query.getResultList();
+		return result.get(0);
 	}
 
+	public void close() {
+		em.close();
+		emf.close();
+	}
 }
