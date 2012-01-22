@@ -28,7 +28,7 @@ public class Snap {
 	private static final String LOG_LAYOUT = "%-10r %-5p [%t]: %m%n";
 
 	private static final String LOG_FILE_EXTENSION = ".log";
-	private static final String LOG_FILE_DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss-S";
+	private static final String LOG_FILE_DATE_FORMAT = "yyyy-MM-dd HH_mm_ss_S";
 
 	public static void main(String[] args) {
 		configureLogging();
@@ -59,7 +59,7 @@ public class Snap {
 		root.addAppender(new ConsoleAppender(layout));
 		LOG.info("Console logging started");
 		String logFileName = getLogFileName();
-		String logFilePath = Directories.LOGS + logFileName;
+		String logFilePath = Directories.LOGS + "/" + logFileName;
 		try {
 			root.addAppender(new FileAppender(layout, logFilePath));
 			LOG.info("File logging started");

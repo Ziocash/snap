@@ -2,11 +2,11 @@ package se.gustavkarlsson.snap.resources;
 
 public abstract class Directories {
 
-	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
-	public static final String APP_DATA = getAppDir() + "Snap" + FILE_SEPARATOR;
-	public static final String LOGS = APP_DATA + "logs" + FILE_SEPARATOR;
-	public static final String SESSIONS = APP_DATA + "sessions" + FILE_SEPARATOR;
-	public static final String IMAGES = "src" + FILE_SEPARATOR + "main" + FILE_SEPARATOR + "resources" + FILE_SEPARATOR + "images" + FILE_SEPARATOR;
+	//public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+	public static final String APP_DATA = getAppDir();
+	public static final String LOGS = APP_DATA + "/logs";
+	public static final String SESSIONS = APP_DATA + "/sessions";
+	public static final String IMAGES = "src/main/resources/images";
 
 	
 	private static String getAppDir() {
@@ -14,14 +14,11 @@ public abstract class Directories {
 
 		String path;
 		if (osName.toLowerCase().contains("win")) {
-			path = System.getenv("APPDATA");
-			path += FILE_SEPARATOR;
-			
-			return path;
+			path = System.getenv("APPDATA") + "/Snap";
+		} else {
+			path = System.getProperty("user.home") + "/.snap";
 		}
-		path = System.getProperty("user.home");
-		path += FILE_SEPARATOR + ".";
-
+		
 		return path;
 	}
 }

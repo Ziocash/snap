@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import se.gustavkarlsson.snap.resources.Strings;
 
 @MappedSuperclass
-public abstract class Node implements Label {
+public abstract class Node implements FileFolderLabel {
 
 	@Column(name = "Name", nullable = false)
 	private String name;
@@ -66,8 +66,8 @@ public abstract class Node implements Label {
 		if (obj == this) {
 			return true;
 		}
-		if (obj instanceof Label) { // TODO is instanceof enough??
-			Label other = (Label) obj;
+		if (obj instanceof FileFolderLabel) { // TODO is instanceof enough??
+			FileFolderLabel other = (FileFolderLabel) obj;
 			return name.equals(other.getName());
 		}
 		return false;

@@ -8,9 +8,9 @@ import javax.persistence.Id;
 
 import org.eclipse.swt.graphics.Image;
 
-import se.gustavkarlsson.snap.resources.Directories;
 import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
+import se.gustavkarlsson.snap.util.FileUtils;
 
 @Entity(name = "Files")
 public class FileNode extends Node {
@@ -27,10 +27,7 @@ public class FileNode extends Node {
 	}
 
 	public FileNode(String path) {
-		this(path, path
-				.substring(path.lastIndexOf(Directories.FILE_SEPARATOR) + 1)); // TODO
-																				// FILE_SEPARATOR
-																				// really?
+		this(path, FileUtils.extractFileNameFromPath(path));
 	}
 
 	public FileNode(String path, String name) {

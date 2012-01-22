@@ -1,6 +1,6 @@
 package se.gustavkarlsson.snap.service;
 
-import se.gustavkarlsson.snap.session.SessionManager;
+import se.gustavkarlsson.snap.service.session.SessionManager;
 
 public class Service {
 	

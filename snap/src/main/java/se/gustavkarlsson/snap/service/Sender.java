@@ -5,8 +5,8 @@ import java.net.BindException;
 import java.net.InetAddress;
 import java.util.Observable;
 
-import se.gustavkarlsson.snap.connection.DataConnection;
-import se.gustavkarlsson.snap.connection.ServerSocketDataConnection;
+import se.gustavkarlsson.snap.service.connection.DataConnection;
+import se.gustavkarlsson.snap.service.connection.ServerSocketDataConnection;
 
 public class Sender extends Observable implements Runnable {
 

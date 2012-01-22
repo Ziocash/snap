@@ -3,10 +3,10 @@ package se.gustavkarlsson.snap.gui;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.wizard.Wizard;
 
-import se.gustavkarlsson.snap.gui.pages.AdvancedOptionsPage;
-import se.gustavkarlsson.snap.gui.pages.ChooseFilesPage;
-import se.gustavkarlsson.snap.gui.pages.ChooseSessionPage;
-import se.gustavkarlsson.snap.gui.pages.WelcomePage;
+import se.gustavkarlsson.snap.gui.pages.general.welcome.WelcomePage;
+import se.gustavkarlsson.snap.gui.pages.send.advancedoptions.AdvancedOptionsPage;
+import se.gustavkarlsson.snap.gui.pages.send.choosefiles.ChooseFilesPage;
+import se.gustavkarlsson.snap.gui.pages.send.choosesession.ChooseSessionPage;
 import se.gustavkarlsson.snap.main.Snap;
 import se.gustavkarlsson.snap.service.Service;
 import se.gustavkarlsson.snap.util.LoggerHelper;

@@ -18,7 +18,7 @@ import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
 
 @Entity(name = "Folders")
-public class FolderNode extends Node implements Label {
+public class FolderNode extends Node implements FileFolderLabel {
 
 	@Column(name = "FolderID")
 	@Id
