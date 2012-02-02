@@ -14,9 +14,12 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 
+import se.gustavkarlsson.snap.domain.FolderNode;
 import se.gustavkarlsson.snap.gui.SnapWizard;
 import se.gustavkarlsson.snap.resources.Directories;
+import se.gustavkarlsson.snap.resources.PropertyManager;
 import se.gustavkarlsson.snap.service.Service;
+import se.gustavkarlsson.snap.service.persistance.PersistanceManager;
 import se.gustavkarlsson.snap.util.LoggerHelper;
 
 public class Snap {
@@ -36,6 +39,9 @@ public class Snap {
 	}
 
 	private static void runWizard() {
+		LOG.info("Loading properties");
+		PropertyManager.load();
+
 		LOG.info("Creating service");
 		Service service = new Service();
 
@@ -47,8 +53,10 @@ public class Snap {
 
 		LOG.info("Opening GUI");
 		dialog.open();
-
 		LOG.info("GUI closed");
+
+		LOG.info("Saving properties");
+		PropertyManager.save(); // Flytta denna
 	}
 
 	private static void configureLogging() {

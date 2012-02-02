@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 
+import se.gustavkarlsson.snap.resources.PropertyManager;
 import se.gustavkarlsson.snap.util.PasswordUtils;
 import se.gustavkarlsson.snap.util.PasswordUtils.Strength;
 
@@ -99,16 +100,19 @@ public class AdvancedOptionsPage extends WizardPage {
 		gd_portText.widthHint = 50;
 		portText.setLayoutData(gd_portText);
 		portText.addVerifyListener(new PortVerifyListener());
+		portText.setText(Integer.toString(PropertyManager.getListeningPort()));
 
 		enableUpnpPortMappingButton = new Button(networkGroup, SWT.CHECK);
 		enableUpnpPortMappingButton.setLayoutData(new GridData(SWT.LEFT,
 				SWT.CENTER, false, false, 2, 1));
 		enableUpnpPortMappingButton.setText("Enable UPnP port mapping");
+		enableUpnpPortMappingButton.setSelection(PropertyManager.isUsingUpnp());
 
 		enableNatpmpPortMappingButton = new Button(networkGroup, SWT.CHECK);
 		enableNatpmpPortMappingButton.setLayoutData(new GridData(SWT.LEFT,
 				SWT.CENTER, false, false, 2, 1));
 		enableNatpmpPortMappingButton.setText("Enable NAT-PMP port mapping");
+		enableNatpmpPortMappingButton.setSelection(PropertyManager.isUsingNatPmp());
 
 		Group compressionGroup = new Group(container, SWT.NONE);
 		compressionGroup.setText("Compression");
@@ -199,17 +203,10 @@ public class AdvancedOptionsPage extends WizardPage {
 		updateEncryptionKeyPhraseStrengthText();
 	}
 
-	private class UpdateWidgetsAdapter extends SelectionAdapter {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			updateWidgets();
-		}
-	}
-
 	private void updateEncryptionKeyPhraseStrengthText() {
 		Strength keyPhraseStrength = PasswordUtils
 				.checkStrength(encryptionKeyPhraseText.getText());
-
+	
 		Color textColor;
 		switch (keyPhraseStrength) {
 		case EXCEPTIONAL:
@@ -240,6 +237,13 @@ public class AdvancedOptionsPage extends WizardPage {
 		}
 		encryptionKeyPhraseStrengthText.setForeground(textColor);
 		encryptionKeyPhraseStrengthText.setText(keyPhraseStrength.toString());
+	}
+
+	private class UpdateWidgetsAdapter extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			updateWidgets();
+		}
 	}
 
 	private class PortVerifyListener implements VerifyListener {

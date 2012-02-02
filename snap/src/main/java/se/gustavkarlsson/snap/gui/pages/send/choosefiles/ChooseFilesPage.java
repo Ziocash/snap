@@ -7,6 +7,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -15,6 +17,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Tree;
 
 import se.gustavkarlsson.snap.domain.FolderNode;
+import se.gustavkarlsson.snap.resources.PropertyManager;
 import se.gustavkarlsson.snap.service.persistance.PersistanceManager;
 import se.gustavkarlsson.snap.service.session.SessionManager;
 
@@ -71,6 +74,8 @@ public class ChooseFilesPage extends WizardPage {
 
 		enableAdvancedOptionsButton = new Button(container, SWT.CHECK);
 		enableAdvancedOptionsButton.setText("Enable Advanced Options");
+		enableAdvancedOptionsButton.setSelection(PropertyManager.isUsingAdvancedOptions());
+		enableAdvancedOptionsButton.addSelectionListener(new EnableAdvancedOptionsAdapter());
 	}
 
 	@Override
@@ -98,5 +103,12 @@ public class ChooseFilesPage extends WizardPage {
 			return null; // TODO return page
 		}
 		return super.getNextPage();
+	}
+	
+	private class EnableAdvancedOptionsAdapter extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent event) {
+			PropertyManager.setUsingAdvancedOptions(enableAdvancedOptionsButton.getSelection());
+		}
 	}
 }
