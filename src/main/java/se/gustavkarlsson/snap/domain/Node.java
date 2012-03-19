@@ -1,7 +1,6 @@
 package se.gustavkarlsson.snap.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;

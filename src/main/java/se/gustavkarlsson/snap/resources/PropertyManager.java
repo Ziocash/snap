@@ -8,7 +8,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
+import se.gustavkarlsson.snap.util.LoggerHelper;
+
 public abstract class PropertyManager {
+	
+	private static final Logger LOG = LoggerHelper.getLogger();
+	
 	private static final String PROPERTIES_FILE_PATH = Directories.APP_DATA
 			+ "/snap.properties";
 
@@ -27,46 +34,40 @@ public abstract class PropertyManager {
 	private static Properties properties = new Properties();
 
 	public static void load() {
+		LOG.info("Loading properties from file: " + PROPERTIES_FILE_PATH);
 		InputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(PROPERTIES_FILE_PATH);
 			properties.load(inputStream);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.warn("Property file could not be read: " + PROPERTIES_FILE_PATH);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Failed to load properties", e);
 		} finally {
 			if (inputStream != null) {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 		}
 	}
 	
-	public static void save() {
+	public static void store() {
+		LOG.info("Storing properties to file: " + PROPERTIES_FILE_PATH);
 		OutputStream outputStream = null;
 		try {
 			outputStream = new FileOutputStream(PROPERTIES_FILE_PATH);
 			properties.store(outputStream, null);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Failed to write properties file: " + PROPERTIES_FILE_PATH, e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Failed to store properties", e);
 		} finally {
 			if (outputStream != null) {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 		}
@@ -104,9 +105,11 @@ public abstract class PropertyManager {
 			int newRet = Integer.parseInt(str);
 			if (0 <= newRet && newRet <= 65535) {
 				ret = newRet;
+			} else {
+				LOG.warn("Listening port is out of range: " + newRet);
 			}
 		} catch (NumberFormatException e) {
-			// TODO log warning
+			LOG.warn("Could not parse listening port: " + str);
 		}
 		return ret;
 	}
