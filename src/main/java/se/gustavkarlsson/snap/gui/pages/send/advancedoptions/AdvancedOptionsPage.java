@@ -151,7 +151,7 @@ public class AdvancedOptionsPage extends WizardPage {
 				SWT.CENTER, true, false, 1, 1));
 		encryptionKeyPhraseLabel.setText("Key phrase:");
 
-		encryptionKeyPhraseText = new Text(encryptionGroup, SWT.BORDER);
+		encryptionKeyPhraseText = new Text(encryptionGroup, SWT.BORDER | SWT.PASSWORD);
 		GridData gd_encryptionKeyPhraseText = new GridData(SWT.RIGHT,
 				SWT.CENTER, false, false, 1, 1);
 		gd_encryptionKeyPhraseText.widthHint = 150;
@@ -204,6 +204,10 @@ public class AdvancedOptionsPage extends WizardPage {
 	}
 
 	private void updateEncryptionKeyPhraseStrengthText() {
+		if (!enableEncryptionButton.getSelection()) {
+			encryptionKeyPhraseStrengthText.setText("");
+			return;
+		}
 		Strength keyPhraseStrength = PasswordUtils
 				.checkStrength(encryptionKeyPhraseText.getText());
 	
