@@ -30,7 +30,7 @@ public class FileTreeContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object element) {
 		if (element instanceof FolderNode) {
-			return ((FolderNode) element).listChildren();
+			return ((FolderNode) element).getChildren().toArray();
 		}
 		throw new IllegalArgumentException(Strings.ILLEGAL_ARGUMENT_TYPE + ": "
 				+ element.getClass().getCanonicalName());

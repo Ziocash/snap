@@ -1,35 +1,14 @@
 package se.gustavkarlsson.snap.domain;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
-import org.eclipse.swt.graphics.Image;
-
-import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
 
-@Entity(name = "Folders")
-public class FolderNode extends Node implements FileFolderLabel {
+public class FolderNode extends Node {
 
-	@Column(name = "FolderID")
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<Node> children = new HashSet<Node>();
-
-	public FolderNode() {
-	}
+	private final Set<Node> children = new HashSet<Node>();
 
 	public FolderNode(String name) {
 		super(name);
@@ -39,9 +18,8 @@ public class FolderNode extends Node implements FileFolderLabel {
 		return !children.isEmpty();
 	}
 
-	public Node[] listChildren() {
-		Node[] childArray = new Node[children.size()];
-		return children.toArray(childArray);
+	public Set<Node> getChildren() {
+		return Collections.unmodifiableSet(children);
 	}
 
 	public boolean addChild(Node child) {
@@ -49,41 +27,29 @@ public class FolderNode extends Node implements FileFolderLabel {
 			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
 					+ ": child");
 		}
-
-		boolean added = children.add(child);
-		if (added) {
-			child.setParent(this);
+		if (isAncestor(child)) {
+			throw new IllegalStateException(
+					"Cannot add child node as it is an ancestor to this node.");
 		}
-
-		return added;
+		if (children.add(child)) {
+			child.setParent(this);
+			return true;
+		}
+		return false;
 	}
 
 	public boolean removeChild(Node child) {
-		return children.remove(child);
+		if (children.remove(child)) {
+			child.setParent(null);
+			return true;
+		}
+		return false;
 	}
 
-	public void removeAllChildren() {
+	public void clearChildren() {
+		for (Node child : children) {
+			child.setParent(null);
+		}
 		children.clear();
-	}
-	
-	public Set<Node> getChildren() {
-		return children;
-	}
-	
-	public void setChildren(Set<Node> children) {
-		this.children = children;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@Override
-	public Image getImage() {
-		return Images.FOLDER;
 	}
 }

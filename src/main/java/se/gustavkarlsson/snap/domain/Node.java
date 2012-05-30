@@ -1,44 +1,24 @@
 package se.gustavkarlsson.snap.domain;
 
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import se.gustavkarlsson.snap.resources.Strings;
 
-@MappedSuperclass
-public abstract class Node implements FileFolderLabel {
+public abstract class Node {
 
-	@Column(name = "Name", nullable = false)
-	private String name;
-
-	@Column(name = "Parent_FK")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "FolderID", nullable = true)
+	private final String name;
 	private FolderNode parent = null;
-
-	public Node() {
-	}
 
 	public Node(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
 					+ ": name");
 		}
-
 		this.name = name;
 	}
 
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public boolean hasParent() {
@@ -49,27 +29,38 @@ public abstract class Node implements FileFolderLabel {
 		return parent;
 	}
 
-	void setParent(FolderNode parent) {
+	protected void setParent(FolderNode parent) {
 		this.parent = parent;
+	}
+
+	protected boolean isAncestor(Node node) {
+		if (node == null) {
+			return false;
+		}
+		if (node == this) {
+			return true;
+		}
+		return isAncestor(node.getParent());
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(17, 31).append(name).toHashCode();
+		HashCodeBuilder builder = new HashCodeBuilder(17, 31);
+		builder.append(name);
+		return builder.toHashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
 		if (obj == this) {
 			return true;
 		}
-		if (obj instanceof FileFolderLabel) { // TODO is instanceof enough??
-			FileFolderLabel other = (FileFolderLabel) obj;
-			return name.equals(other.getName());
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
 		}
-		return false;
+		Node node = (Node) obj;
+		boolean nameEquals = name == node.getName()
+				|| (name != null && name.equals(node.getName()));
+		return nameEquals;
 	}
 }

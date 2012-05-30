@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Tree;
 
 import se.gustavkarlsson.snap.domain.FolderNode;
 import se.gustavkarlsson.snap.resources.PropertyManager;
-import se.gustavkarlsson.snap.service.persistance.PersistanceManager;
 import se.gustavkarlsson.snap.service.session.SessionManager;
 
 public class ChooseFilesPage extends WizardPage {
@@ -83,9 +82,7 @@ public class ChooseFilesPage extends WizardPage {
 		if (visible) {
 			if (sessionManager.hasCurrentSession()
 					&& sessionManager.hasSessionChanged()) {
-				PersistanceManager persistanceManager = new PersistanceManager(
-						sessionManager.getCurrentSession().getPath());
-				fileTreeViewer.setInput(persistanceManager.getRoot());
+				fileTreeViewer.setInput(new FolderNode("root"));
 				sessionManager.setSessionChanged(false);
 			}
 		}
