@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Display;
 import se.gustavkarlsson.snap.gui.SnapWizard;
 import se.gustavkarlsson.snap.resources.Directories;
 import se.gustavkarlsson.snap.resources.PropertyManager;
-import se.gustavkarlsson.snap.service.Service;
 import se.gustavkarlsson.snap.util.LoggerHelper;
 
 public class Snap {
@@ -40,12 +39,9 @@ public class Snap {
 		LOG.info("Loading properties");
 		PropertyManager.load();
 
-		LOG.info("Creating service");
-		Service service = new Service();
-
 		LOG.info("Creating GUI");
 		Display.getDefault();
-		Wizard wizard = new SnapWizard(service);
+		Wizard wizard = new SnapWizard();
 		WizardDialog dialog = new WizardDialog(null, wizard);
 		dialog.create();
 

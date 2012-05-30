@@ -14,11 +14,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Tree;
 
 import se.gustavkarlsson.snap.domain.FolderNode;
 import se.gustavkarlsson.snap.resources.PropertyManager;
-import se.gustavkarlsson.snap.service.session.SessionManager;
 
 public class ChooseFilesPage extends WizardPage {
 
@@ -27,17 +25,13 @@ public class ChooseFilesPage extends WizardPage {
 	private Button enableAdvancedOptionsButton;
 	private TreeViewer fileTreeViewer;
 
-	private SessionManager sessionManager;
-
 	/**
 	 * Create the wizard.
 	 */
-	public ChooseFilesPage(SessionManager sessionManager) {
+	public ChooseFilesPage() {
 		super(ChooseFilesPage.class.getName());
 		setTitle("Choose Files");
-		setDescription("Use the \"Browse\" button or by drag and drop from your OS.");
-
-		this.sessionManager = sessionManager;
+		setDescription("Use the \"Browse\" button or drag and drop from your OS.");
 	}
 
 	/**
@@ -58,40 +52,28 @@ public class ChooseFilesPage extends WizardPage {
 		filesGroup.setLayout(new GridLayout(1, false));
 
 		fileTreeViewer = new TreeViewer(filesGroup, SWT.BORDER | SWT.MULTI);
-		Tree fileTree = fileTreeViewer.getTree();
-		fileTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
-				1));
+		fileTreeViewer.getTree().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		fileTreeViewer.setLabelProvider(new FileTreeLabelProvider());
 		fileTreeViewer.setContentProvider(new FileTreeContentProvider());
 		fileTreeViewer.setComparator(new FileTreeViewerComparator(
 				new FileNameComparator()));
 		fileTreeViewer.setInput(fileTreeRoot);
-		int operations = DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] { FileTransfer.getInstance() };
-		fileTreeViewer.addDropSupport(operations, transfers,
+		fileTreeViewer.addDropSupport(DND.DROP_MOVE,
+				new Transfer[] { FileTransfer.getInstance() },
 				new FileTreeDropListener(this, fileTreeViewer));
 
 		enableAdvancedOptionsButton = new Button(container, SWT.CHECK);
 		enableAdvancedOptionsButton.setText("Enable Advanced Options");
-		enableAdvancedOptionsButton.setSelection(PropertyManager.isUsingAdvancedOptions());
-		enableAdvancedOptionsButton.addSelectionListener(new EnableAdvancedOptionsAdapter());
-	}
-
-	@Override
-	public void setVisible(boolean visible) {
-		if (visible) {
-			if (sessionManager.hasCurrentSession()
-					&& sessionManager.hasSessionChanged()) {
-				fileTreeViewer.setInput(new FolderNode("root"));
-				sessionManager.setSessionChanged(false);
-			}
-		}
-		super.setVisible(visible);
+		enableAdvancedOptionsButton.setSelection(PropertyManager
+				.isUsingAdvancedOptions());
+		enableAdvancedOptionsButton
+				.addSelectionListener(new EnableAdvancedOptionsAdapter());
 	}
 
 	@Override
 	public boolean isPageComplete() {
-		return fileTreeRoot.hasChildren();
+		return fileTreeRoot.hasChildren() && getNextPage() != null;
 	}
 
 	@Override
@@ -101,11 +83,13 @@ public class ChooseFilesPage extends WizardPage {
 		}
 		return super.getNextPage();
 	}
-	
+
 	private class EnableAdvancedOptionsAdapter extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent event) {
-			PropertyManager.setUsingAdvancedOptions(enableAdvancedOptionsButton.getSelection());
+			PropertyManager.setUsingAdvancedOptions(enableAdvancedOptionsButton
+					.getSelection());
+			getWizard().getContainer().updateButtons();
 		}
 	}
 }

@@ -13,18 +13,18 @@ import org.apache.log4j.Logger;
 import se.gustavkarlsson.snap.util.LoggerHelper;
 
 public abstract class PropertyManager {
-	
+
 	private static final Logger LOG = LoggerHelper.getLogger();
-	
+
 	private static final String PROPERTIES_FILE_PATH = Directories.APP_DATA
 			+ "/snap.properties";
 
 	private static final String PROPERTY_USE_ADVANCED_OPTIONS_KEY = "use_advanced_options";
 	private static final boolean PROPERTY_USE_ADVANCED_OPTIONS_DEFAULT_VALUE = false;
-	
+
 	private static final String PROPERTY_USE_UPNP_KEY = "use_upnp";
 	private static final boolean PROPERTY_USE_UPNP_DEFAULT_VALUE = true;
-	
+
 	private static final String PROPERTY_USE_NAT_PMP_KEY = "use_nat_pmp";
 	private static final boolean PROPERTY_USE_NAT_PMP_DEFAULT_VALUE = true;
 
@@ -52,7 +52,7 @@ public abstract class PropertyManager {
 			}
 		}
 	}
-	
+
 	public static void store() {
 		LOG.info("Storing properties to file: " + PROPERTIES_FILE_PATH);
 		OutputStream outputStream = null;
@@ -60,7 +60,8 @@ public abstract class PropertyManager {
 			outputStream = new FileOutputStream(PROPERTIES_FILE_PATH);
 			properties.store(outputStream, null);
 		} catch (FileNotFoundException e) {
-			LOG.error("Failed to write properties file: " + PROPERTIES_FILE_PATH, e);
+			LOG.error("Failed to write properties file: "
+					+ PROPERTIES_FILE_PATH, e);
 		} catch (IOException e) {
 			LOG.error("Failed to store properties", e);
 		} finally {
@@ -74,7 +75,8 @@ public abstract class PropertyManager {
 	}
 
 	public static boolean isUsingAdvancedOptions() {
-		return getBoolean(PROPERTY_USE_ADVANCED_OPTIONS_KEY, PROPERTY_USE_ADVANCED_OPTIONS_DEFAULT_VALUE);
+		return getBoolean(PROPERTY_USE_ADVANCED_OPTIONS_KEY,
+				PROPERTY_USE_ADVANCED_OPTIONS_DEFAULT_VALUE);
 	}
 
 	public static void setUsingAdvancedOptions(boolean value) {
@@ -82,7 +84,8 @@ public abstract class PropertyManager {
 	}
 
 	public static boolean isUsingUpnp() {
-		return getBoolean(PROPERTY_USE_UPNP_KEY, PROPERTY_USE_UPNP_DEFAULT_VALUE);
+		return getBoolean(PROPERTY_USE_UPNP_KEY,
+				PROPERTY_USE_UPNP_DEFAULT_VALUE);
 	}
 
 	public static void setUsingUpnp(boolean value) {
@@ -90,7 +93,8 @@ public abstract class PropertyManager {
 	}
 
 	public static boolean isUsingNatPmp() {
-		return getBoolean(PROPERTY_USE_NAT_PMP_KEY, PROPERTY_USE_NAT_PMP_DEFAULT_VALUE);
+		return getBoolean(PROPERTY_USE_NAT_PMP_KEY,
+				PROPERTY_USE_NAT_PMP_DEFAULT_VALUE);
 	}
 
 	public static void setUsingNatPmp(boolean value) {
@@ -120,14 +124,14 @@ public abstract class PropertyManager {
 	}
 
 	private static boolean getBoolean(String key, boolean defaultValue) {
-		String str = properties.getProperty(key, Boolean.toString(defaultValue));
+		String str = properties
+				.getProperty(key, Boolean.toString(defaultValue));
 		boolean ret = Boolean.parseBoolean(str);
 		return ret;
 	}
-	
+
 	private static void setBoolean(String key, boolean value) {
-		properties.setProperty(key,
-				Boolean.toString(value));
+		properties.setProperty(key, Boolean.toString(value));
 	}
 
 }
