@@ -1,19 +1,14 @@
 package se.gustavkarlsson.snap.gui.pages.send.advancedoptions;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -29,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 
 import se.gustavkarlsson.snap.resources.PropertyManager;
+import se.gustavkarlsson.snap.util.NetworkUtils;
 import se.gustavkarlsson.snap.util.PasswordUtils;
 import se.gustavkarlsson.snap.util.PasswordUtils.Strength;
 
@@ -62,14 +58,50 @@ public class AdvancedOptionsPage extends WizardPage {
 	 * 
 	 * @param parent
 	 */
+	@Override
 	public void createControl(Composite parent) {
-		UpdateWidgetsAdapter upgradeWidgetsAdapter = new UpdateWidgetsAdapter();
-
 		Composite container = new Composite(parent, SWT.NULL);
-
-		setControl(container);
 		container.setLayout(new GridLayout(1, false));
+		setControl(container);
 
+		createNetworkGroup(container);
+		createCompressionGroup(container);
+		createEncryptionGroup(container);
+
+		bindComponents();
+	}
+	
+	private void bindComponents() {
+		DataBindingContext bindingContext = new DataBindingContext(
+				SWTObservables.getRealm(getShell().getDisplay()));
+
+		// Compression
+		IObservableValue enableCompressionButtonSelection = SWTObservables
+				.observeSelection(enableCompressionButton);
+		IObservableValue compressionRateLabelEnabled = SWTObservables
+				.observeEnabled(compressionRateLabel);
+		IObservableValue compressionRateComboEnabled = SWTObservables
+				.observeEnabled(compressionRateCombo);
+		bindingContext.bindValue(enableCompressionButtonSelection, compressionRateLabelEnabled);
+		bindingContext.bindValue(enableCompressionButtonSelection, compressionRateComboEnabled);
+		
+		// Encryption
+		IObservableValue enableEncryptionButtonSelection = SWTObservables
+				.observeSelection(enableEncryptionButton);
+		IObservableValue encryptionKeyPhraseLabelEnabled = SWTObservables
+				.observeEnabled(encryptionKeyPhraseLabel);
+		IObservableValue encryptionKeyPhraseTextEnabled = SWTObservables
+				.observeEnabled(encryptionKeyPhraseText);
+		IObservableValue encryptionKeyPhraseStrengthTextEnabled = SWTObservables
+				.observeEnabled(encryptionKeyPhraseStrengthText);
+		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyPhraseLabelEnabled);
+		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyPhraseTextEnabled);
+		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyPhraseStrengthTextEnabled);
+		
+		// FIXME Clear encryptionKeyPhraseStrengthText when disabled.
+	}
+
+	private void createNetworkGroup(Composite container) {
 		Group networkGroup = new Group(container, SWT.NONE);
 		networkGroup.setLayout(new GridLayout(2, false));
 		networkGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
@@ -85,7 +117,7 @@ public class AdvancedOptionsPage extends WizardPage {
 		listeningAddressComboViewer
 				.setLabelProvider(new Inet4AddressLabelProvider());
 
-		listeningAddressComboViewer.setInput(listInetAddresses());
+		listeningAddressComboViewer.setInput(NetworkUtils.listInetAddresses());
 		listeningAddressCombo = listeningAddressComboViewer.getCombo();
 		listeningAddressCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
 				true, false, 1, 1));
@@ -113,7 +145,9 @@ public class AdvancedOptionsPage extends WizardPage {
 				SWT.CENTER, false, false, 2, 1));
 		enableNatpmpPortMappingButton.setText("Enable NAT-PMP port mapping");
 		enableNatpmpPortMappingButton.setSelection(PropertyManager.isUsingNatPmp());
-
+	}
+	
+	private void createCompressionGroup(Composite container) {
 		Group compressionGroup = new Group(container, SWT.NONE);
 		compressionGroup.setText("Compression");
 		compressionGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
@@ -121,7 +155,6 @@ public class AdvancedOptionsPage extends WizardPage {
 		compressionGroup.setLayout(new GridLayout(3, false));
 
 		enableCompressionButton = new Button(compressionGroup, SWT.CHECK);
-		enableCompressionButton.addSelectionListener(upgradeWidgetsAdapter);
 		enableCompressionButton.setText("Enable");
 
 		compressionRateLabel = new Label(compressionGroup, SWT.NONE);
@@ -135,7 +168,9 @@ public class AdvancedOptionsPage extends WizardPage {
 		compressionRateComboViewer.setInput(new Integer[] { 1, 5, 9 });
 		compressionRateCombo = compressionRateComboViewer.getCombo();
 		compressionRateCombo.select(1);
-
+	}
+	
+	private void createEncryptionGroup(Composite container) {
 		encryptionGroup = new Group(container, SWT.NONE);
 		encryptionGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
@@ -143,7 +178,6 @@ public class AdvancedOptionsPage extends WizardPage {
 		encryptionGroup.setLayout(new GridLayout(4, false));
 
 		enableEncryptionButton = new Button(encryptionGroup, SWT.CHECK);
-		enableEncryptionButton.addSelectionListener(upgradeWidgetsAdapter);
 		enableEncryptionButton.setText("Enable");
 
 		encryptionKeyPhraseLabel = new Label(encryptionGroup, SWT.NONE);
@@ -168,39 +202,6 @@ public class AdvancedOptionsPage extends WizardPage {
 		gd_encryptionKeyPhraseStrengthText.widthHint = 100;
 		encryptionKeyPhraseStrengthText
 				.setLayoutData(gd_encryptionKeyPhraseStrengthText);
-
-		updateWidgets();
-	}
-
-	private List<InetAddress> listInetAddresses() {
-		List<InetAddress> addresses = new ArrayList<InetAddress>();
-		try {
-			// Listen on all addresses
-			addresses.add(InetAddress.getByAddress(new byte[] { 0, 0, 0, 0 }));
-
-			// Loopback address
-			addresses.add(InetAddress.getByName(null));
-
-			InetAddress localhost = InetAddress.getLocalHost();
-			addresses.addAll(Arrays.asList(InetAddress.getAllByName(localhost
-					.getCanonicalHostName())));
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return addresses;
-	}
-
-	private void updateWidgets() {
-		boolean compressionEnabled = enableCompressionButton.getSelection();
-		compressionRateLabel.setEnabled(compressionEnabled);
-		compressionRateCombo.setEnabled(compressionEnabled);
-
-		boolean encryptionEnabled = enableEncryptionButton.getSelection();
-		encryptionKeyPhraseLabel.setEnabled(encryptionEnabled);
-		encryptionKeyPhraseText.setEnabled(encryptionEnabled);
-		encryptionKeyPhraseStrengthText.setEnabled(encryptionEnabled);
-		updateEncryptionKeyPhraseStrengthText();
 	}
 
 	private void updateEncryptionKeyPhraseStrengthText() {
@@ -243,16 +244,9 @@ public class AdvancedOptionsPage extends WizardPage {
 		encryptionKeyPhraseStrengthText.setText(keyPhraseStrength.toString());
 	}
 
-	private class UpdateWidgetsAdapter extends SelectionAdapter {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			updateWidgets();
-		}
-	}
-
 	private class PortVerifyListener implements VerifyListener {
 
-		private ToolTip balloon = new ToolTip(getShell(), SWT.BALLOON
+		private final ToolTip balloon = new ToolTip(getShell(), SWT.BALLOON
 				| SWT.ICON_ERROR);
 
 		public PortVerifyListener() {
@@ -288,7 +282,7 @@ public class AdvancedOptionsPage extends WizardPage {
 
 	private class EncryptionKeyPhraseVerifyListener implements VerifyListener {
 
-		private ToolTip balloon = new ToolTip(getShell(), SWT.BALLOON
+		private final ToolTip balloon = new ToolTip(getShell(), SWT.BALLOON
 				| SWT.ICON_ERROR);
 
 		public EncryptionKeyPhraseVerifyListener() {
@@ -314,7 +308,7 @@ public class AdvancedOptionsPage extends WizardPage {
 
 		@Override
 		public void modifyText(ModifyEvent event) {
-			updateWidgets();
+			updateEncryptionKeyPhraseStrengthText();
 		}
 	}
 }
