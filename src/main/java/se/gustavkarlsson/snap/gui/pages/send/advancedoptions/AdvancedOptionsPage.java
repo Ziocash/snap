@@ -37,12 +37,12 @@ public class AdvancedOptionsPage extends WizardPage {
 	private Combo listeningAddressCombo;
 	private Group encryptionGroup;
 	private Button enableEncryptionButton;
-	private Text encryptionKeyPhraseText;
-	private Label encryptionKeyPhraseLabel;
+	private Text encryptionKeyText;
+	private Label encryptionKeyLabel;
 	private Button enableUpnpPortMappingButton;
 	private Button enableNatpmpPortMappingButton;
 	private Text portText;
-	private Text encryptionKeyPhraseStrengthText;
+	private Text encryptionKeyStrengthText;
 
 	/**
 	 * Create the wizard.
@@ -88,17 +88,17 @@ public class AdvancedOptionsPage extends WizardPage {
 		// Encryption
 		IObservableValue enableEncryptionButtonSelection = SWTObservables
 				.observeSelection(enableEncryptionButton);
-		IObservableValue encryptionKeyPhraseLabelEnabled = SWTObservables
-				.observeEnabled(encryptionKeyPhraseLabel);
-		IObservableValue encryptionKeyPhraseTextEnabled = SWTObservables
-				.observeEnabled(encryptionKeyPhraseText);
-		IObservableValue encryptionKeyPhraseStrengthTextEnabled = SWTObservables
-				.observeEnabled(encryptionKeyPhraseStrengthText);
-		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyPhraseLabelEnabled);
-		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyPhraseTextEnabled);
-		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyPhraseStrengthTextEnabled);
+		IObservableValue encryptionKeyLabelEnabled = SWTObservables
+				.observeEnabled(encryptionKeyLabel);
+		IObservableValue encryptionKeyTextEnabled = SWTObservables
+				.observeEnabled(encryptionKeyText);
+		IObservableValue encryptionKeyStrengthTextEnabled = SWTObservables
+				.observeEnabled(encryptionKeyStrengthText);
+		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyLabelEnabled);
+		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyTextEnabled);
+		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyStrengthTextEnabled);
 		
-		// FIXME Clear encryptionKeyPhraseStrengthText when disabled.
+		// FIXME Clear encryptionKeyStrengthText when disabled.
 	}
 
 	private void createNetworkGroup(Composite container) {
@@ -180,40 +180,40 @@ public class AdvancedOptionsPage extends WizardPage {
 		enableEncryptionButton = new Button(encryptionGroup, SWT.CHECK);
 		enableEncryptionButton.setText("Enable");
 
-		encryptionKeyPhraseLabel = new Label(encryptionGroup, SWT.NONE);
-		encryptionKeyPhraseLabel.setLayoutData(new GridData(SWT.RIGHT,
+		encryptionKeyLabel = new Label(encryptionGroup, SWT.NONE);
+		encryptionKeyLabel.setLayoutData(new GridData(SWT.RIGHT,
 				SWT.CENTER, true, false, 1, 1));
-		encryptionKeyPhraseLabel.setText("Key phrase:");
+		encryptionKeyLabel.setText("Encryption key:");
 
-		encryptionKeyPhraseText = new Text(encryptionGroup, SWT.BORDER | SWT.PASSWORD);
-		GridData gd_encryptionKeyPhraseText = new GridData(SWT.RIGHT,
+		encryptionKeyText = new Text(encryptionGroup, SWT.BORDER | SWT.PASSWORD);
+		GridData gd_encryptionKeyText = new GridData(SWT.RIGHT,
 				SWT.CENTER, false, false, 1, 1);
-		gd_encryptionKeyPhraseText.widthHint = 150;
-		encryptionKeyPhraseText.setLayoutData(gd_encryptionKeyPhraseText);
-		encryptionKeyPhraseText
-				.addVerifyListener(new EncryptionKeyPhraseVerifyListener());
-		encryptionKeyPhraseText
-				.addModifyListener(new EncryptionKeyPhraseModifyListener());
+		gd_encryptionKeyText.widthHint = 150;
+		encryptionKeyText.setLayoutData(gd_encryptionKeyText);
+		encryptionKeyText
+				.addVerifyListener(new EncryptionKeyVerifyListener());
+		encryptionKeyText
+				.addModifyListener(new EncryptionKeyModifyListener());
 
-		encryptionKeyPhraseStrengthText = new Text(encryptionGroup, SWT.BORDER
+		encryptionKeyStrengthText = new Text(encryptionGroup, SWT.BORDER
 				| SWT.READ_ONLY | SWT.CENTER);
-		GridData gd_encryptionKeyPhraseStrengthText = new GridData(SWT.RIGHT,
+		GridData gd_encryptionKeyStrengthText = new GridData(SWT.RIGHT,
 				SWT.CENTER, false, false, 1, 1);
-		gd_encryptionKeyPhraseStrengthText.widthHint = 100;
-		encryptionKeyPhraseStrengthText
-				.setLayoutData(gd_encryptionKeyPhraseStrengthText);
+		gd_encryptionKeyStrengthText.widthHint = 100;
+		encryptionKeyStrengthText
+				.setLayoutData(gd_encryptionKeyStrengthText);
 	}
 
-	private void updateEncryptionKeyPhraseStrengthText() {
+	private void updateEncryptionKeyStrengthText() {
 		if (!enableEncryptionButton.getSelection()) {
-			encryptionKeyPhraseStrengthText.setText("");
+			encryptionKeyStrengthText.setText("");
 			return;
 		}
-		Strength keyPhraseStrength = PasswordUtils
-				.checkStrength(encryptionKeyPhraseText.getText());
+		Strength encryptionKeyStrength = PasswordUtils
+				.checkStrength(encryptionKeyText.getText());
 	
 		Color textColor;
-		switch (keyPhraseStrength) {
+		switch (encryptionKeyStrength) {
 		case EXCEPTIONAL:
 			textColor = new Color(Display.getCurrent(), 0, 0, 255);
 			break;
@@ -240,8 +240,8 @@ public class AdvancedOptionsPage extends WizardPage {
 			// TODO log error
 			break;
 		}
-		encryptionKeyPhraseStrengthText.setForeground(textColor);
-		encryptionKeyPhraseStrengthText.setText(keyPhraseStrength.toString());
+		encryptionKeyStrengthText.setForeground(textColor);
+		encryptionKeyStrengthText.setText(encryptionKeyStrength.toString());
 	}
 
 	private class PortVerifyListener implements VerifyListener {
@@ -280,35 +280,35 @@ public class AdvancedOptionsPage extends WizardPage {
 		}
 	}
 
-	private class EncryptionKeyPhraseVerifyListener implements VerifyListener {
+	private class EncryptionKeyVerifyListener implements VerifyListener {
 
 		private final ToolTip balloon = new ToolTip(getShell(), SWT.BALLOON
 				| SWT.ICON_ERROR);
 
-		public EncryptionKeyPhraseVerifyListener() {
+		public EncryptionKeyVerifyListener() {
 			balloon.setMessage("Invalid character input");
 		}
 
 		@Override
 		public void verifyText(VerifyEvent event) {
-			String newText = encryptionKeyPhraseText.getText().substring(0,
+			String newText = encryptionKeyText.getText().substring(0,
 					event.start)
 					+ event.text
-					+ encryptionKeyPhraseText.getText().substring(event.end);
+					+ encryptionKeyText.getText().substring(event.end);
 
 			event.doit = PasswordUtils.checkValidity(newText);
 
-			balloon.setLocation(encryptionKeyPhraseText
-					.toDisplay(encryptionKeyPhraseText.getSize()));
+			balloon.setLocation(encryptionKeyText
+					.toDisplay(encryptionKeyText.getSize()));
 			balloon.setVisible(!event.doit);
 		}
 	}
 
-	private class EncryptionKeyPhraseModifyListener implements ModifyListener {
+	private class EncryptionKeyModifyListener implements ModifyListener {
 
 		@Override
 		public void modifyText(ModifyEvent event) {
-			updateEncryptionKeyPhraseStrengthText();
+			updateEncryptionKeyStrengthText();
 		}
 	}
 }
