@@ -1,5 +1,7 @@
 package se.gustavkarlsson.snap.gui.pages.send.advancedoptions;
 
+import net.miginfocom.swt.MigLayout;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -12,8 +14,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -42,7 +42,6 @@ public class AdvancedOptionsPage extends WizardPage {
 	private Button enableUpnpPortMappingButton;
 	private Button enableNatpmpPortMappingButton;
 	private Text portText;
-	private Text encryptionKeyStrengthText;
 
 	/**
 	 * Create the wizard.
@@ -60,8 +59,8 @@ public class AdvancedOptionsPage extends WizardPage {
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
-		container.setLayout(new GridLayout(1, false));
+		Composite container = new Composite(parent, SWT.NONE);
+		container.setLayout(new MigLayout("", "[grow]"));
 		setControl(container);
 
 		createNetworkGroup(container);
@@ -69,6 +68,85 @@ public class AdvancedOptionsPage extends WizardPage {
 		createEncryptionGroup(container);
 
 		bindComponents();
+	}
+
+	private void createNetworkGroup(Composite container) {
+		Group networkGroup = new Group(container, SWT.NONE);
+		networkGroup.setLayoutData("growx, wrap");
+		networkGroup.setLayout(new MigLayout("", "[][right, grow]"));
+		networkGroup.setText("Network");
+
+		Label listeningAddressLabel = new Label(networkGroup, SWT.NONE);
+		listeningAddressLabel.setText("Listening address:");
+
+		listeningAddressComboViewer = new ComboViewer(networkGroup, SWT.READ_ONLY);
+		listeningAddressComboViewer
+				.setContentProvider(new ArrayContentProvider());
+		listeningAddressComboViewer
+				.setLabelProvider(new Inet4AddressLabelProvider());
+
+		listeningAddressComboViewer.setInput(NetworkUtils.listInetAddresses());
+		listeningAddressCombo = listeningAddressComboViewer.getCombo();
+		listeningAddressCombo.setLayoutData("wrap");
+		listeningAddressCombo.select(0);
+
+		Label portLabel = new Label(networkGroup, SWT.NONE);
+		portLabel.setText("Port:");
+
+		portText = new Text(networkGroup, SWT.BORDER);
+		portText.setLayoutData("wrap, width 50");
+		portText.addVerifyListener(new PortVerifyListener());
+		portText.setText(Integer.toString(PropertyManager.getListeningPort()));
+
+		enableUpnpPortMappingButton = new Button(networkGroup, SWT.CHECK);
+		enableUpnpPortMappingButton.setLayoutData("wrap, span 2");
+		enableUpnpPortMappingButton.setText("Enable UPnP port mapping");
+		enableUpnpPortMappingButton.setSelection(PropertyManager.isUsingUpnp());
+
+		enableNatpmpPortMappingButton = new Button(networkGroup, SWT.CHECK);
+		enableNatpmpPortMappingButton.setLayoutData("span 2");
+		enableNatpmpPortMappingButton.setText("Enable NAT-PMP port mapping");
+		enableNatpmpPortMappingButton.setSelection(PropertyManager.isUsingNatPmp());
+	}
+	
+	private void createCompressionGroup(Composite container) {
+		Group compressionGroup = new Group(container, SWT.NONE);
+		compressionGroup.setLayoutData("growx, wrap");
+		compressionGroup.setLayout(new MigLayout("", "[grow][][]"));
+		compressionGroup.setText("Compression");
+
+		enableCompressionButton = new Button(compressionGroup, SWT.CHECK);
+		enableCompressionButton.setText("Enable");
+
+		compressionRateLabel = new Label(compressionGroup, SWT.NONE);
+		compressionRateLabel.setText("Rate:");
+
+		compressionRateComboViewer = new ComboViewer(compressionGroup, SWT.READ_ONLY);
+		compressionRateComboViewer.setLabelProvider(new CompressionRateLabelProvider());
+		compressionRateComboViewer.setContentProvider(new ArrayContentProvider());
+		compressionRateComboViewer.setInput(new Integer[] { 9, 5, 1 });
+		compressionRateCombo = compressionRateComboViewer.getCombo();
+		compressionRateCombo.select(1);
+	}
+	
+	private void createEncryptionGroup(Composite container) {
+		encryptionGroup = new Group(container, SWT.NONE);
+		encryptionGroup.setLayoutData("growx");
+		encryptionGroup.setLayout(new MigLayout("", "[grow][][]"));
+		encryptionGroup.setText("Encryption");
+
+		enableEncryptionButton = new Button(encryptionGroup, SWT.CHECK);
+		enableEncryptionButton.setText("Enable");
+
+		encryptionKeyLabel = new Label(encryptionGroup, SWT.NONE);
+		encryptionKeyLabel.setText("Encryption key:");
+
+		encryptionKeyText = new Text(encryptionGroup, SWT.BORDER | SWT.PASSWORD);
+		encryptionKeyText.setLayoutData("width 150");
+		encryptionKeyText
+				.addVerifyListener(new EncryptionKeyVerifyListener());
+		encryptionKeyText
+				.addModifyListener(new EncryptionKeyModifyListener());
 	}
 	
 	private void bindComponents() {
@@ -92,156 +170,38 @@ public class AdvancedOptionsPage extends WizardPage {
 				.observeEnabled(encryptionKeyLabel);
 		IObservableValue encryptionKeyTextEnabled = SWTObservables
 				.observeEnabled(encryptionKeyText);
-		IObservableValue encryptionKeyStrengthTextEnabled = SWTObservables
-				.observeEnabled(encryptionKeyStrengthText);
 		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyLabelEnabled);
 		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyTextEnabled);
-		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyStrengthTextEnabled);
-		
-		// FIXME Clear encryptionKeyStrengthText when disabled.
-	}
-
-	private void createNetworkGroup(Composite container) {
-		Group networkGroup = new Group(container, SWT.NONE);
-		networkGroup.setLayout(new GridLayout(2, false));
-		networkGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
-		networkGroup.setText("Network");
-
-		Label listeningAddressLabel = new Label(networkGroup, SWT.NONE);
-		listeningAddressLabel.setText("Listening address:");
-
-		listeningAddressComboViewer = new ComboViewer(networkGroup, SWT.NONE);
-		listeningAddressComboViewer
-				.setContentProvider(new ArrayContentProvider());
-		listeningAddressComboViewer
-				.setLabelProvider(new Inet4AddressLabelProvider());
-
-		listeningAddressComboViewer.setInput(NetworkUtils.listInetAddresses());
-		listeningAddressCombo = listeningAddressComboViewer.getCombo();
-		listeningAddressCombo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
-				true, false, 1, 1));
-		listeningAddressCombo.select(0);
-
-		Label portLabel = new Label(networkGroup, SWT.NONE);
-		portLabel.setText("Port:");
-
-		portText = new Text(networkGroup, SWT.BORDER);
-		GridData gd_portText = new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1);
-		gd_portText.widthHint = 50;
-		portText.setLayoutData(gd_portText);
-		portText.addVerifyListener(new PortVerifyListener());
-		portText.setText(Integer.toString(PropertyManager.getListeningPort()));
-
-		enableUpnpPortMappingButton = new Button(networkGroup, SWT.CHECK);
-		enableUpnpPortMappingButton.setLayoutData(new GridData(SWT.LEFT,
-				SWT.CENTER, false, false, 2, 1));
-		enableUpnpPortMappingButton.setText("Enable UPnP port mapping");
-		enableUpnpPortMappingButton.setSelection(PropertyManager.isUsingUpnp());
-
-		enableNatpmpPortMappingButton = new Button(networkGroup, SWT.CHECK);
-		enableNatpmpPortMappingButton.setLayoutData(new GridData(SWT.LEFT,
-				SWT.CENTER, false, false, 2, 1));
-		enableNatpmpPortMappingButton.setText("Enable NAT-PMP port mapping");
-		enableNatpmpPortMappingButton.setSelection(PropertyManager.isUsingNatPmp());
-	}
-	
-	private void createCompressionGroup(Composite container) {
-		Group compressionGroup = new Group(container, SWT.NONE);
-		compressionGroup.setText("Compression");
-		compressionGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
-		compressionGroup.setLayout(new GridLayout(3, false));
-
-		enableCompressionButton = new Button(compressionGroup, SWT.CHECK);
-		enableCompressionButton.setText("Enable");
-
-		compressionRateLabel = new Label(compressionGroup, SWT.NONE);
-		compressionRateLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
-				true, false, 1, 1));
-		compressionRateLabel.setText("Rate:");
-
-		compressionRateComboViewer = new ComboViewer(compressionGroup, SWT.NONE);
-		compressionRateComboViewer.setLabelProvider(new CompressionRateLabelProvider());
-		compressionRateComboViewer.setContentProvider(new ArrayContentProvider());
-		compressionRateComboViewer.setInput(new Integer[] { 1, 5, 9 });
-		compressionRateCombo = compressionRateComboViewer.getCombo();
-		compressionRateCombo.select(1);
-	}
-	
-	private void createEncryptionGroup(Composite container) {
-		encryptionGroup = new Group(container, SWT.NONE);
-		encryptionGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
-		encryptionGroup.setText("Encryption");
-		encryptionGroup.setLayout(new GridLayout(4, false));
-
-		enableEncryptionButton = new Button(encryptionGroup, SWT.CHECK);
-		enableEncryptionButton.setText("Enable");
-
-		encryptionKeyLabel = new Label(encryptionGroup, SWT.NONE);
-		encryptionKeyLabel.setLayoutData(new GridData(SWT.RIGHT,
-				SWT.CENTER, true, false, 1, 1));
-		encryptionKeyLabel.setText("Encryption key:");
-
-		encryptionKeyText = new Text(encryptionGroup, SWT.BORDER | SWT.PASSWORD);
-		GridData gd_encryptionKeyText = new GridData(SWT.RIGHT,
-				SWT.CENTER, false, false, 1, 1);
-		gd_encryptionKeyText.widthHint = 150;
-		encryptionKeyText.setLayoutData(gd_encryptionKeyText);
-		encryptionKeyText
-				.addVerifyListener(new EncryptionKeyVerifyListener());
-		encryptionKeyText
-				.addModifyListener(new EncryptionKeyModifyListener());
-
-		encryptionKeyStrengthText = new Text(encryptionGroup, SWT.BORDER
-				| SWT.READ_ONLY | SWT.CENTER);
-		GridData gd_encryptionKeyStrengthText = new GridData(SWT.RIGHT,
-				SWT.CENTER, false, false, 1, 1);
-		gd_encryptionKeyStrengthText.widthHint = 100;
-		encryptionKeyStrengthText
-				.setLayoutData(gd_encryptionKeyStrengthText);
 	}
 
 	private void updateEncryptionKeyStrengthText() {
-		if (!enableEncryptionButton.getSelection()) {
-			encryptionKeyStrengthText.setText("");
-			return;
-		}
+		// TODO bind this using bindings instead
 		Strength encryptionKeyStrength = PasswordUtils
 				.checkStrength(encryptionKeyText.getText());
 	
-		Color textColor;
+		Color color;
 		switch (encryptionKeyStrength) {
 		case EXCEPTIONAL:
-			textColor = new Color(Display.getCurrent(), 0, 0, 255);
-			break;
-		case VERY_STRONG:
-			textColor = new Color(Display.getCurrent(), 0, 85, 255);
+			color = new Color(Display.getCurrent(), 0, 230, 230);
 			break;
 		case STRONG:
-			textColor = new Color(Display.getCurrent(), 0, 170, 255);
+			color = new Color(Display.getCurrent(), 115, 230, 115);
 			break;
 		case MODERATE:
-			textColor = new Color(Display.getCurrent(), 127, 170, 127);
+			color = new Color(Display.getCurrent(), 230, 230, 0);
 			break;
 		case WEAK:
-			textColor = new Color(Display.getCurrent(), 255, 170, 0);
-			break;
-		case VERY_WEAK:
-			textColor = new Color(Display.getCurrent(), 255, 85, 0);
+			color = new Color(Display.getCurrent(), 230, 115, 0);
 			break;
 		case INADEQUATE:
-			textColor = new Color(Display.getCurrent(), 255, 0, 0);
+			color = new Color(Display.getCurrent(), 230, 0, 0);
 			break;
 		default:
-			textColor = null;
+			color = null;
 			// TODO log error
 			break;
 		}
-		encryptionKeyStrengthText.setForeground(textColor);
-		encryptionKeyStrengthText.setText(encryptionKeyStrength.toString());
+		encryptionKeyText.setForeground(color);
 	}
 
 	private class PortVerifyListener implements VerifyListener {

@@ -1,5 +1,7 @@
 package se.gustavkarlsson.snap.gui.pages.send.choosefiles;
 
+import net.miginfocom.swt.MigLayout;
+
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -9,8 +11,6 @@ import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -39,21 +39,19 @@ public class ChooseFilesPage extends WizardPage {
 	 * 
 	 * @param parent
 	 */
+	@Override
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
-
+		Composite container = new Composite(parent, SWT.NONE);
+		container.setLayout(new MigLayout("", "[grow]", "[grow][]"));
 		setControl(container);
-		container.setLayout(new GridLayout(1, false));
 
 		Group filesGroup = new Group(container, SWT.NONE);
-		filesGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
-				1, 1));
+		filesGroup.setLayoutData("grow, wrap");
 		filesGroup.setText("Files");
-		filesGroup.setLayout(new GridLayout(1, false));
+		filesGroup.setLayout(new MigLayout("", "[grow]", "[grow]"));
 
 		fileTreeViewer = new TreeViewer(filesGroup, SWT.BORDER | SWT.MULTI);
-		fileTreeViewer.getTree().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		fileTreeViewer.getTree().setLayoutData("grow");
 		fileTreeViewer.setLabelProvider(new FileTreeLabelProvider());
 		fileTreeViewer.setContentProvider(new FileTreeContentProvider());
 		fileTreeViewer.setComparator(new FileTreeViewerComparator(
@@ -62,6 +60,7 @@ public class ChooseFilesPage extends WizardPage {
 		fileTreeViewer.addDropSupport(DND.DROP_MOVE,
 				new Transfer[] { FileTransfer.getInstance() },
 				new FileTreeDropListener(this, fileTreeViewer));
+		// TODO scroll Tree
 
 		enableAdvancedOptionsButton = new Button(container, SWT.CHECK);
 		enableAdvancedOptionsButton.setText("Enable Advanced Options");

@@ -5,7 +5,7 @@ public abstract class PasswordUtils {
 	private static final String SPECIAL_CHARACTERS = ",._-+*/=;:!?\"#¤%&/\\()'<>|@£${}[]";
 
 	public enum Strength {
-		INADEQUATE, VERY_WEAK, WEAK, MODERATE, STRONG, VERY_STRONG, EXCEPTIONAL;
+		INADEQUATE, WEAK, MODERATE, STRONG, EXCEPTIONAL;
 	}
 
 	public static boolean checkValidity(String password) {
@@ -29,23 +29,17 @@ public abstract class PasswordUtils {
 
 		double strength = Math.pow(entropy, password.length());
 
-		if (strength > Math.pow(10, 19)) {
+		if (strength > Math.pow(10, 18)) {
 			return Strength.EXCEPTIONAL;
-		}
-		if (strength > Math.pow(10, 17)) {
-			return Strength.VERY_STRONG;
 		}
 		if (strength > Math.pow(10, 15)) {
 			return Strength.STRONG;
 		}
-		if (strength > Math.pow(10, 13)) {
+		if (strength > Math.pow(10, 12)) {
 			return Strength.MODERATE;
 		}
-		if (strength > Math.pow(10, 11)) {
-			return Strength.WEAK;
-		}
 		if (strength > Math.pow(10, 9)) {
-			return Strength.VERY_WEAK;
+			return Strength.WEAK;
 		}
 		return Strength.INADEQUATE;
 	}
