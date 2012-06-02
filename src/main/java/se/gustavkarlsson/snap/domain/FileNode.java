@@ -4,7 +4,8 @@ import se.gustavkarlsson.snap.resources.Strings;
 import se.gustavkarlsson.snap.util.FileUtils;
 
 public class FileNode extends Node {
-
+	
+	private static final long serialVersionUID = 1L;
 	private final String path;
 
 	public FileNode(String path) {

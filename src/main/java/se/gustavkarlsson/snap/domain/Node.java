@@ -1,11 +1,14 @@
 package se.gustavkarlsson.snap.domain;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import se.gustavkarlsson.snap.resources.Strings;
 
-public abstract class Node {
-
+public abstract class Node implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	private final String name;
 	private FolderNode parent = null;
 

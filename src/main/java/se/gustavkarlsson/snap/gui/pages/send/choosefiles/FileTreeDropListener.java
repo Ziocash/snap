@@ -13,13 +13,8 @@ import se.gustavkarlsson.snap.util.FileUtils;
 
 public class FileTreeDropListener extends ViewerDropAdapter {
 
-	private ChooseFilesPage chooseFilesPage;
-
-	public FileTreeDropListener(ChooseFilesPage chooseFilesPage,
-			TreeViewer viewer) {
+	public FileTreeDropListener(TreeViewer viewer) {
 		super(viewer);
-
-		this.chooseFilesPage = chooseFilesPage;
 	}
 
 	@Override
@@ -62,17 +57,27 @@ public class FileTreeDropListener extends ViewerDropAdapter {
 			return false;
 		}
 
-		String[] filePaths = (String[]) data;
+		if (data instanceof String[]) {
+			String[] filePaths = (String[]) data;
 
-		for (String filePath : filePaths) {
-			addFileRecursively(targetParent, filePath);
+			for (String filePath : filePaths) {
+				addFileTreeFromPath(targetParent, filePath);
+			}
+		} else if (data instanceof Object[]) {
+			for (Object object : (Object[]) data) {
+				Node node = (Node) object;
+				targetParent.addChild(node);
+			}
+		} else {
+			// TODO error message
+			return false;
 		}
+		
 		getViewer().refresh();
-		chooseFilesPage.getWizard().getContainer().updateButtons();
 		return true;
 	}
 
-	private static void addFileRecursively(FolderNode parent, String filePath) {
+	private static void addFileTreeFromPath(FolderNode parent, String filePath) {
 		File file = new File(filePath);
 
 		if (file.isFile()) {
@@ -84,7 +89,7 @@ public class FileTreeDropListener extends ViewerDropAdapter {
 				// TODO Error message (could not list)
 			} else {
 				for (File child : file.listFiles()) {
-					addFileRecursively(folder, child.getAbsolutePath());
+					addFileTreeFromPath(folder, child.getAbsolutePath());
 				}
 			}
 			parent.addChild(folder);

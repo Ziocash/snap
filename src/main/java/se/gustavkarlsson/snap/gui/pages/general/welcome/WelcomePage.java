@@ -31,9 +31,6 @@ public class WelcomePage extends WizardPage {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new MigLayout());
 		setControl(container);
-		
-		container.setBackground(new org.eclipse.swt.graphics.Color(getShell().getDisplay(), 100, 255, 100));
-		parent.setBackground(new org.eclipse.swt.graphics.Color(getShell().getDisplay(), 255, 100, 100));
 
 		sendButton = new Button(container, SWT.RADIO);
 		sendButton.addSelectionListener(radioButtonSelectedListener);

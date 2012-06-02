@@ -3,14 +3,15 @@ package se.gustavkarlsson.snap.gui.pages.send.advancedoptions;
 import net.miginfocom.swt.MigLayout;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -145,63 +146,73 @@ public class AdvancedOptionsPage extends WizardPage {
 		encryptionKeyText.setLayoutData("width 150");
 		encryptionKeyText
 				.addVerifyListener(new EncryptionKeyVerifyListener());
-		encryptionKeyText
-				.addModifyListener(new EncryptionKeyModifyListener());
 	}
 	
 	private void bindComponents() {
 		DataBindingContext bindingContext = new DataBindingContext(
-				SWTObservables.getRealm(getShell().getDisplay()));
+				SWTObservables.getRealm(Display.getCurrent()));
 
-		// Compression
-		IObservableValue enableCompressionButtonSelection = SWTObservables
-				.observeSelection(enableCompressionButton);
-		IObservableValue compressionRateLabelEnabled = SWTObservables
-				.observeEnabled(compressionRateLabel);
-		IObservableValue compressionRateComboEnabled = SWTObservables
-				.observeEnabled(compressionRateCombo);
+		// Compression widgets enabled
+		IObservableValue enableCompressionButtonSelection = WidgetProperties.selection().observe(enableCompressionButton);
+		IObservableValue compressionRateLabelEnabled = WidgetProperties.enabled().observe(compressionRateLabel);
+		IObservableValue compressionRateComboEnabled = WidgetProperties.enabled().observe(compressionRateCombo);
 		bindingContext.bindValue(enableCompressionButtonSelection, compressionRateLabelEnabled);
 		bindingContext.bindValue(enableCompressionButtonSelection, compressionRateComboEnabled);
 		
-		// Encryption
-		IObservableValue enableEncryptionButtonSelection = SWTObservables
-				.observeSelection(enableEncryptionButton);
-		IObservableValue encryptionKeyLabelEnabled = SWTObservables
-				.observeEnabled(encryptionKeyLabel);
-		IObservableValue encryptionKeyTextEnabled = SWTObservables
-				.observeEnabled(encryptionKeyText);
+		// Encryption widgets enabled
+		IObservableValue enableEncryptionButtonSelection = WidgetProperties.selection().observe(enableEncryptionButton);
+		IObservableValue encryptionKeyLabelEnabled = WidgetProperties.enabled().observe(encryptionKeyLabel);
+		IObservableValue encryptionKeyTextEnabled = WidgetProperties.enabled().observe(encryptionKeyText);
 		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyLabelEnabled);
 		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyTextEnabled);
-	}
 
-	private void updateEncryptionKeyStrengthText() {
-		// TODO bind this using bindings instead
-		Strength encryptionKeyStrength = PasswordUtils
-				.checkStrength(encryptionKeyText.getText());
+		// Encryption key color
+		IObservableValue encryptionKeyTextModify = WidgetProperties.text(SWT.Modify).observe(encryptionKeyText);
+		IObservableValue encryptionKeyTextForeground = WidgetProperties.foreground().observe(encryptionKeyText);
+		UpdateValueStrategy encryptionKeyToColorConverter = new UpdateValueStrategy().setConverter(new EncryptionKeyToColorConverter());
+		bindingContext.bindValue(encryptionKeyTextModify, encryptionKeyTextForeground, encryptionKeyToColorConverter, null);
+	}
 	
-		Color color;
-		switch (encryptionKeyStrength) {
-		case EXCEPTIONAL:
-			color = new Color(Display.getCurrent(), 0, 230, 230);
-			break;
-		case STRONG:
-			color = new Color(Display.getCurrent(), 115, 230, 115);
-			break;
-		case MODERATE:
-			color = new Color(Display.getCurrent(), 230, 230, 0);
-			break;
-		case WEAK:
-			color = new Color(Display.getCurrent(), 230, 115, 0);
-			break;
-		case INADEQUATE:
-			color = new Color(Display.getCurrent(), 230, 0, 0);
-			break;
-		default:
-			color = null;
-			// TODO log error
-			break;
+	private class EncryptionKeyToColorConverter implements IConverter {
+		@Override
+		public Object convert(Object encryptionKey) {
+			Strength encryptionKeyStrength = PasswordUtils
+					.checkStrength((String) encryptionKey);
+
+			Color color;
+			switch (encryptionKeyStrength) {
+			case EXCEPTIONAL:
+				color = new Color(Display.getCurrent(), 0, 230, 230);
+				break;
+			case STRONG:
+				color = new Color(Display.getCurrent(), 115, 230, 115);
+				break;
+			case MODERATE:
+				color = new Color(Display.getCurrent(), 230, 230, 0);
+				break;
+			case WEAK:
+				color = new Color(Display.getCurrent(), 230, 115, 0);
+				break;
+			case INADEQUATE:
+				color = new Color(Display.getCurrent(), 230, 0, 0);
+				break;
+			default:
+				color = null;
+				// TODO log error
+				break;
+			}
+			return color;
 		}
-		encryptionKeyText.setForeground(color);
+
+		@Override
+		public Object getFromType() {
+			return String.class;
+		}
+
+		@Override
+		public Object getToType() {
+			return Color.class;
+		}
 	}
 
 	private class PortVerifyListener implements VerifyListener {
@@ -261,14 +272,6 @@ public class AdvancedOptionsPage extends WizardPage {
 			balloon.setLocation(encryptionKeyText
 					.toDisplay(encryptionKeyText.getSize()));
 			balloon.setVisible(!event.doit);
-		}
-	}
-
-	private class EncryptionKeyModifyListener implements ModifyListener {
-
-		@Override
-		public void modifyText(ModifyEvent event) {
-			updateEncryptionKeyStrengthText();
 		}
 	}
 }

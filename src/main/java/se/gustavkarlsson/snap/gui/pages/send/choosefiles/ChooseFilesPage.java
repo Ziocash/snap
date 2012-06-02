@@ -57,10 +57,12 @@ public class ChooseFilesPage extends WizardPage {
 		fileTreeViewer.setComparator(new FileTreeViewerComparator(
 				new FileNameComparator()));
 		fileTreeViewer.setInput(fileTreeRoot);
-		fileTreeViewer.addDropSupport(DND.DROP_MOVE,
-				new Transfer[] { FileTransfer.getInstance() },
-				new FileTreeDropListener(this, fileTreeViewer));
-		// TODO scroll Tree
+		fileTreeViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY,
+				new Transfer[] { InternalFileTransfer.getInstance() },
+				new InternalFileDragListener(fileTreeViewer));
+		fileTreeViewer.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY,
+				new Transfer[] { FileTransfer.getInstance(), InternalFileTransfer.getInstance() },
+				new FileTreeDropListener(fileTreeViewer));
 
 		enableAdvancedOptionsButton = new Button(container, SWT.CHECK);
 		enableAdvancedOptionsButton.setText("Enable Advanced Options");
@@ -68,6 +70,8 @@ public class ChooseFilesPage extends WizardPage {
 				.isUsingAdvancedOptions());
 		enableAdvancedOptionsButton
 				.addSelectionListener(new EnableAdvancedOptionsAdapter());
+		
+		// TODO scroll Tree
 	}
 
 	@Override

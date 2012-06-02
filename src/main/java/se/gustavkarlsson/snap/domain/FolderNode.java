@@ -7,7 +7,8 @@ import java.util.Set;
 import se.gustavkarlsson.snap.resources.Strings;
 
 public class FolderNode extends Node {
-
+	
+	private static final long serialVersionUID = 1L;
 	private final Set<Node> children = new HashSet<Node>();
 
 	public FolderNode(String name) {
