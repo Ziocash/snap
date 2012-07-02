@@ -8,7 +8,6 @@ import se.gustavkarlsson.snap.resources.Strings;
 
 public class FolderNode extends Node {
 	
-	private static final long serialVersionUID = 1L;
 	private final Set<Node> children = new HashSet<Node>();
 
 	public FolderNode(String name) {
@@ -17,6 +16,10 @@ public class FolderNode extends Node {
 
 	public boolean hasChildren() {
 		return !children.isEmpty();
+	}
+	
+	public boolean hasChild(Node child) {
+		return children.contains(child);
 	}
 
 	public Set<Node> getChildren() {
@@ -33,6 +36,9 @@ public class FolderNode extends Node {
 					"Cannot add child node as it is an ancestor to this node.");
 		}
 		if (children.add(child)) {
+			if (child.hasParent()) {
+				child.getParent().removeChild(child); // Remove child from any previously existing parent.
+			}
 			child.setParent(this);
 			return true;
 		}
@@ -52,5 +58,14 @@ public class FolderNode extends Node {
 			child.setParent(null);
 		}
 		children.clear();
+	}
+	
+	@Override
+	public FolderNode clone() {
+		FolderNode clone = (FolderNode) super.clone();
+		for (Node child : children) {
+			clone.addChild(child.clone());
+		}
+		return clone;
 	}
 }

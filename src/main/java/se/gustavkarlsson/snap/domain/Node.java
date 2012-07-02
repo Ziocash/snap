@@ -1,16 +1,15 @@
 package se.gustavkarlsson.snap.domain;
 
-import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import se.gustavkarlsson.snap.resources.Strings;
 
-public abstract class Node implements Serializable {
+public abstract class Node implements Cloneable {
 	
-	private static final long serialVersionUID = 1L;
-	private final String name;
-	private FolderNode parent = null;
+	protected String name;
+	protected FolderNode parent = null;
 
 	public Node(String name) {
 		if (name == null) {
@@ -45,6 +44,14 @@ public abstract class Node implements Serializable {
 		}
 		return isAncestor(node.getParent());
 	}
+	
+	public List<String> getNodePath(List<String> path) {
+		if (parent != null) {
+			path.add(0, name);
+			parent.getNodePath(path);
+		}
+		return path;
+	}
 
 	@Override
 	public int hashCode() {
@@ -65,5 +72,23 @@ public abstract class Node implements Serializable {
 		boolean nameEquals = name == node.getName()
 				|| (name != null && name.equals(node.getName()));
 		return nameEquals;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+	@Override
+	public Node clone() {
+		Node clone = null;
+		try {
+			clone = (Node) super.clone();
+			clone.name = name;
+		} catch (CloneNotSupportedException e) {
+			// TODO fatal? error message
+			e.printStackTrace();
+		}
+		return clone;
 	}
 }

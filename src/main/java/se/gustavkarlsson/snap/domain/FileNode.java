@@ -5,8 +5,7 @@ import se.gustavkarlsson.snap.util.FileUtils;
 
 public class FileNode extends Node {
 	
-	private static final long serialVersionUID = 1L;
-	private final String path;
+	private String fileSystemPath;
 
 	public FileNode(String path) {
 		this(path, FileUtils.extractFileNameFromPath(path));
@@ -18,10 +17,17 @@ public class FileNode extends Node {
 			throw new IllegalArgumentException(Strings.ARGUMENT_IS_NULL
 					+ ": path");
 		}
-		this.path = path;
+		this.fileSystemPath = path;
 	}
 
-	public String getPath() {
-		return path;
+	public String getFileSystemPath() {
+		return fileSystemPath;
+	}
+	
+	@Override
+	public FileNode clone() {
+		FileNode clone = (FileNode) super.clone();
+		clone.fileSystemPath = fileSystemPath;
+		return clone;
 	}
 }

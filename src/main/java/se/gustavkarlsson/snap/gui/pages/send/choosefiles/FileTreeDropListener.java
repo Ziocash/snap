@@ -1,6 +1,7 @@
 package se.gustavkarlsson.snap.gui.pages.send.choosefiles;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -61,12 +62,17 @@ public class FileTreeDropListener extends ViewerDropAdapter {
 			String[] filePaths = (String[]) data;
 
 			for (String filePath : filePaths) {
-				addFileTreeFromPath(targetParent, filePath);
+				addFileTreeFromFileSystemPath(targetParent, filePath);
 			}
-		} else if (data instanceof Object[]) {
-			for (Object object : (Object[]) data) {
-				Node node = (Node) object;
-				targetParent.addChild(node);
+		} else if (data instanceof InternalFileDndPayload) {
+			InternalFileDndPayload payload = (InternalFileDndPayload) data;
+			for (List<String> path : payload.getNodes()) {
+				Node node = getInternalFileFromPath(targetParent, path); // FIXME targetparent ska vara root?
+				if (payload.isCopyAction()) {
+					copyInternalFile(node, targetParent);
+				} else {
+					moveInternalFile(node, targetParent);
+				}
 			}
 		} else {
 			// TODO error message
@@ -76,20 +82,51 @@ public class FileTreeDropListener extends ViewerDropAdapter {
 		getViewer().refresh();
 		return true;
 	}
+	
+	private static boolean moveInternalFile(Node file, FolderNode targetParent) {
+		return targetParent.addChild(file);
+	}
+	
+	private static boolean copyInternalFile(Node file, FolderNode targetParent) {
+		Node clone = file.clone();
+		return targetParent.addChild(clone);
+	}
+	
+	private static Node getInternalFileFromPath(FolderNode root, List<String> path) {
+		Node currentNode = root;
+		
+		while (!path.isEmpty()) {
+			String nextNodeName = path.get(0);
+			
+			if (!(currentNode instanceof FolderNode)) {
+				// TODO: handle error
+			}
+			
+			for (Node child : ((FolderNode) currentNode).getChildren()) {
+				if (child.getName().equals(nextNodeName)) {
+					currentNode = child;
+					path.remove(0);
+					break;
+				}
+			}
+		}
+		
+		return currentNode;
+	}
 
-	private static void addFileTreeFromPath(FolderNode parent, String filePath) {
-		File file = new File(filePath);
+	private static void addFileTreeFromFileSystemPath(FolderNode parent, String fileSystemPath) {
+		File file = new File(fileSystemPath);
 
 		if (file.isFile()) {
-			parent.addChild(new FileNode(filePath));
+			parent.addChild(new FileNode(fileSystemPath));
 		} else {
 			FolderNode folder = new FolderNode(
-					FileUtils.extractFileNameFromPath(filePath));
+					FileUtils.extractFileNameFromPath(fileSystemPath));
 			if (file.listFiles() == null) {
 				// TODO Error message (could not list)
 			} else {
 				for (File child : file.listFiles()) {
-					addFileTreeFromPath(folder, child.getAbsolutePath());
+					addFileTreeFromFileSystemPath(folder, child.getAbsolutePath());
 				}
 			}
 			parent.addChild(folder);

@@ -5,16 +5,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
-import se.gustavkarlsson.snap.domain.FolderNode;
-import se.gustavkarlsson.snap.domain.Node;
+import se.gustavkarlsson.snap.util.LoggerHelper;
 
 public class InternalFileTransfer extends ByteArrayTransfer {
+	private static final Logger logger = LoggerHelper.getLogger();
 	private static final InternalFileTransfer instance = new InternalFileTransfer();
 	private static final String TYPE_NAME = "internal-file-format";
 	private static final int TYPE_ID = registerType(TYPE_NAME);
@@ -41,82 +40,54 @@ public class InternalFileTransfer extends ByteArrayTransfer {
 
 	@Override
 	protected void javaToNative(Object object, TransferData transferData) {
+		if (object == null) {
+			return;
+		}
+		InternalFileDndPayload payload;
 		try {
-			byte[] bytes = serializeNodes((Object[]) object);
-			if (bytes != null) {
-				super.javaToNative(bytes, transferData);
-			}
+			payload = (InternalFileDndPayload) object;
+			byte[] bytes = serialize(payload);
+			super.javaToNative(bytes, transferData);
+		} catch (ClassCastException e) {
+			logger.error("Could not cast object of class: "
+					+ object.getClass().getCanonicalName() + " to "
+					+ InternalFileDndPayload.class.getCanonicalName(), e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Could not serialize object of class: "
+					+ object.getClass().getCanonicalName(), e);
 		}
 	}
 
 	@Override
 	protected Object nativeToJava(TransferData transferData) {
 		byte[] bytes = (byte[]) super.nativeToJava(transferData);
+		if (bytes == null) {
+			return null;
+		}
+		
 		try {
-			Object nodes = deserializeNodes(bytes);
-			return nodes;
-		} catch (ClassCastException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			InternalFileDndPayload payload = deserialize(bytes);
+			return payload;
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Could not deserialize bytes", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Could not deserialize bytes", e);
 		}
 		return null;
 	}
-
-	private static byte[] serializeNodes(Object[] nodes) throws IOException {
+	
+	private byte[] serialize(InternalFileDndPayload payload) throws IOException {
 		ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-		
-		Map<FolderNode, Node> parentChildMap = new HashMap<FolderNode, Node>();
-		for (Object object : nodes) {
-			Node node = (Node) object;
-			FolderNode nodeParent = node.getParent();
-			if (nodeParent != null) {
-				// Detach node from tree (needed for serialization)
-				node.getParent().removeChild(node);
-				parentChildMap.put(nodeParent, node);
-			}
-		}
-
-		try {
-			ObjectOutputStream objectOut = new ObjectOutputStream(bytesOut);
-			objectOut.writeObject(nodes);
-			return bytesOut.toByteArray();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw e;
-		} finally {
-			for (FolderNode nodeParent : parentChildMap.keySet()) {
-				Node child = parentChildMap.get(nodeParent);
-				if (nodeParent != null) {
-					// Detach node from tree (needed for serialization)
-					nodeParent.addChild(child);
-				}
-			}
-		}
+		ObjectOutputStream objectOut = new ObjectOutputStream(bytesOut);
+		objectOut.writeObject(payload);
+		return bytesOut.toByteArray();
 	}
-
-	private static Object deserializeNodes(byte[] bytes) throws ClassNotFoundException,
-			ClassCastException, IOException {
-		ByteArrayInputStream bytesIn = new ByteArrayInputStream(bytes);
-
+	
+	private InternalFileDndPayload deserialize(byte[] data) throws ClassNotFoundException, IOException {
+		ByteArrayInputStream bytesIn = new ByteArrayInputStream(data);
 		ObjectInputStream objectIn = new ObjectInputStream(bytesIn);
-		try {
-			Object nodes = objectIn.readObject();
-			return nodes;
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw e;
-		}
+		Object object =  objectIn.readObject();
+		InternalFileDndPayload payload = (InternalFileDndPayload) object;
+		return payload;
 	}
-
 }
