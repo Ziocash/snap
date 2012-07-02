@@ -23,13 +23,6 @@ public class InternalFileDragListener extends DragSourceAdapter {
 		this.viewer = viewer;
 	}
 
-	@Override
-	public void dragFinished(DragSourceEvent event) {
-		if (!event.doit) {
-			return;
-		}
-	}
-
 	/**
 	 * Method declared on DragSourceListener
 	 */
@@ -39,7 +32,7 @@ public class InternalFileDragListener extends DragSourceAdapter {
 		IStructuredSelection fileTreeSelection = (IStructuredSelection) viewer
 				.getSelection();
 
-		if (InternalFileTransfer.getInstance().isSupportedType(event.dataType)) {
+		if (!InternalFileTransfer.getInstance().isSupportedType(event.dataType)) {
 			logger.error("Unsupported transfer type");
 			return;
 		}

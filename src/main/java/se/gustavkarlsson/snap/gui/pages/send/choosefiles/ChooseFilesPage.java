@@ -62,7 +62,7 @@ public class ChooseFilesPage extends WizardPage {
 				new InternalFileDragListener(fileTreeViewer));
 		fileTreeViewer.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY,
 				new Transfer[] { FileTransfer.getInstance(), InternalFileTransfer.getInstance() },
-				new FileTreeDropListener(fileTreeViewer));
+				new FileTreeDropListener(fileTreeViewer, fileTreeRoot));
 
 		enableAdvancedOptionsButton = new Button(container, SWT.CHECK);
 		enableAdvancedOptionsButton.setText("Enable Advanced Options");

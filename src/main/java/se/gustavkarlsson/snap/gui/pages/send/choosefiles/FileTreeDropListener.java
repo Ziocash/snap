@@ -14,8 +14,11 @@ import se.gustavkarlsson.snap.util.FileUtils;
 
 public class FileTreeDropListener extends ViewerDropAdapter {
 
-	public FileTreeDropListener(TreeViewer viewer) {
+	FolderNode root = null;
+	
+	public FileTreeDropListener(TreeViewer viewer, FolderNode root) {
 		super(viewer);
+		this.root = root;
 	}
 
 	@Override
@@ -67,7 +70,7 @@ public class FileTreeDropListener extends ViewerDropAdapter {
 		} else if (data instanceof InternalFileDndPayload) {
 			InternalFileDndPayload payload = (InternalFileDndPayload) data;
 			for (List<String> path : payload.getNodes()) {
-				Node node = getInternalFileFromPath(targetParent, path); // FIXME targetparent ska vara root?
+				Node node = getInternalFileFromPath(root, path); // FIXME targetparent ska vara root?
 				if (payload.isCopyAction()) {
 					copyInternalFile(node, targetParent);
 				} else {
@@ -82,7 +85,7 @@ public class FileTreeDropListener extends ViewerDropAdapter {
 		getViewer().refresh();
 		return true;
 	}
-	
+
 	private static boolean moveInternalFile(Node file, FolderNode targetParent) {
 		return targetParent.addChild(file);
 	}
