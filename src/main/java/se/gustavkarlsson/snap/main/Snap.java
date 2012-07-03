@@ -4,18 +4,21 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Display;
+import org.ciscavate.cjwizard.PageFactory;
+import org.ciscavate.cjwizard.WizardContainer;
 
-import se.gustavkarlsson.snap.gui.SnapWizard;
-import se.gustavkarlsson.snap.resources.Directories;
+import se.gustavkarlsson.snap.gui.SnapPageFactory;
+import se.gustavkarlsson.snap.resources.Paths;
 import se.gustavkarlsson.snap.resources.PropertyManager;
 import se.gustavkarlsson.snap.util.LoggerHelper;
 
@@ -40,17 +43,28 @@ public class Snap {
 		PropertyManager.load();
 
 		LOG.info("Creating GUI");
-		Display.getDefault();
-		Wizard wizard = new SnapWizard();
-		WizardDialog dialog = new WizardDialog(null, wizard);
-		dialog.create();
+		setLookAndFeel();
+		JFrame snapFrame = new JFrame(APP_NAME + " " + APP_VERSION);
+		PageFactory snapPageFactory = new SnapPageFactory();
+		WizardContainer wizard = new WizardContainer(snapPageFactory); // TODO lägg till pagetemplate som wrappar allt
+		snapFrame.add(wizard);
+		snapFrame.setSize(400, 300);
 
 		LOG.info("Opening GUI");
-		dialog.open();
-		LOG.info("GUI closed");
+		snapFrame.setVisible(true);
+	}
 
-		LOG.info("Saving properties");
-		PropertyManager.store(); // TODO: Flytta denna
+	private static void setLookAndFeel() {
+		try {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if (info.getName().equals("Nimbus")) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			// TODO If Nimbus is not available, you can set the GUI to another look and feel.
+		}
 	}
 
 	private static void configureLogging() {
@@ -61,7 +75,7 @@ public class Snap {
 		root.addAppender(new ConsoleAppender(layout));
 		LOG.info("Console logging started");
 		String logFileName = getLogFileName();
-		String logFilePath = Directories.LOGS + "/" + logFileName;
+		String logFilePath = Paths.LOGS_DIR + "/" + logFileName;
 		try {
 			root.addAppender(new FileAppender(layout, logFilePath));
 			LOG.info("File logging started");

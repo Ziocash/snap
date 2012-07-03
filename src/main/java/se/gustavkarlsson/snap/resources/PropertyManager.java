@@ -16,9 +16,6 @@ public abstract class PropertyManager {
 
 	private static final Logger LOG = LoggerHelper.getLogger();
 
-	private static final String PROPERTIES_FILE_PATH = Directories.APP_DATA
-			+ "/snap.properties";
-
 	private static final String PROPERTY_USE_ADVANCED_OPTIONS_KEY = "use_advanced_options";
 	private static final boolean PROPERTY_USE_ADVANCED_OPTIONS_DEFAULT_VALUE = false;
 
@@ -34,13 +31,13 @@ public abstract class PropertyManager {
 	private static Properties properties = new Properties();
 
 	public static void load() {
-		LOG.info("Loading properties from file: " + PROPERTIES_FILE_PATH);
+		LOG.info("Loading properties from file: " + Paths.PROPERTIES_FILE);
 		InputStream inputStream = null;
 		try {
-			inputStream = new FileInputStream(PROPERTIES_FILE_PATH);
+			inputStream = new FileInputStream(Paths.PROPERTIES_FILE);
 			properties.load(inputStream);
 		} catch (FileNotFoundException e) {
-			LOG.warn("Property file could not be read: " + PROPERTIES_FILE_PATH);
+			LOG.warn("Property file could not be read: " + Paths.PROPERTIES_FILE);
 		} catch (IOException e) {
 			LOG.error("Failed to load properties", e);
 		} finally {
@@ -54,14 +51,14 @@ public abstract class PropertyManager {
 	}
 
 	public static void store() {
-		LOG.info("Storing properties to file: " + PROPERTIES_FILE_PATH);
+		LOG.info("Storing properties to file: " + Paths.PROPERTIES_FILE);
 		OutputStream outputStream = null;
 		try {
-			outputStream = new FileOutputStream(PROPERTIES_FILE_PATH);
+			outputStream = new FileOutputStream(Paths.PROPERTIES_FILE);
 			properties.store(outputStream, null);
 		} catch (FileNotFoundException e) {
 			LOG.error("Failed to write properties file: "
-					+ PROPERTIES_FILE_PATH, e);
+					+ Paths.PROPERTIES_FILE, e);
 		} catch (IOException e) {
 			LOG.error("Failed to store properties", e);
 		} finally {

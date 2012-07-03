@@ -1,113 +1,121 @@
 package se.gustavkarlsson.snap.gui.pages.send.advancedoptions;
 
-import net.miginfocom.swt.MigLayout;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Label;
+import java.security.acl.Group;
 
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolTip;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
+import net.miginfocom.swing.MigLayout;
+import se.gustavkarlsson.snap.gui.SnapWizardPage;
 import se.gustavkarlsson.snap.resources.PropertyManager;
-import se.gustavkarlsson.snap.util.NetworkUtils;
 import se.gustavkarlsson.snap.util.PasswordUtils;
 import se.gustavkarlsson.snap.util.PasswordUtils.Strength;
 
-public class AdvancedOptionsPage extends WizardPage {
-	private ComboViewer listeningAddressComboViewer;
-	private ComboViewer compressionRateComboViewer;
-	private Button enableCompressionButton;
-	private Label compressionRateLabel;
-	private Combo compressionRateCombo;
-	private Combo listeningAddressCombo;
-	private Group encryptionGroup;
-	private Button enableEncryptionButton;
-	private Text encryptionKeyText;
-	private Label encryptionKeyLabel;
-	private Button enableUpnpPortMappingButton;
-	private Button enableNatpmpPortMappingButton;
-	private Text portText;
+public class AdvancedOptionsPage extends SnapWizardPage {
+	private static final long serialVersionUID = 1L;
+	
+	private static final String CANONICAL_NAME = AdvancedOptionsPage.class.getCanonicalName();
+
+	private static final String TITLE = "Advanced Options";
+	private static final String DESCRIPTION = "Set advanced options.";
+	
+	public static final String LISTENING_ADDRESS_COMBO_BOX_NAME = CANONICAL_NAME + ":listeningAddressComboBox";
+	public static final String PORT_TEXT_FIELD_NAME = CANONICAL_NAME + ":portTextField";
+	public static final String ENABLE_UPNP_PORT_MAPPING_CHECK_BOX_NAME = CANONICAL_NAME + ":enableUpnpPortMappingCheckBox";
+	public static final String ENABLE_NAT_PMP_PORT_MAPPING_CHECK_BOX_NAME = CANONICAL_NAME + ":enableNatPmpPortMappingCheckBox";
+	public static final String ENABLE_COMPRESSION_CHECK_BOX_NAME = CANONICAL_NAME + ":enableCompressionCheckBox";
+	public static final String COMPRESSION_RATE_COMBO_BOX_NAME = CANONICAL_NAME + ":compressionRateComboBox";
+	public static final String ENABLE_ENCRYPTION_CHECK_BOX_NAME = CANONICAL_NAME + ":enableEncryptionCheckBox";
+	public static final String ENCRYPTION_KEY_TEXT_FIELD = CANONICAL_NAME + ":encryptionKeyTextField";
+	
+	private JComboBox listeningAddressComboBox = null;
+	private JTextField portTextField = null;
+	
+	private JCheckBox enableUpnpPortMappingCheckBox = null;
+	private JCheckBox enableNatPmpPortMappingCheckBox = null;
+	
+	private JCheckBox enableCompressionCheckBox = null;
+	private JLabel compressionRateLabel = null;
+	private JComboBox compressionRateComboBox = null;
+
+	private JCheckBox enableEncryptionCheckBox = null;
+	private JLabel encryptionKeyLabel = null;
+	private JTextField encryptionKeyTextField = null;
 
 	/**
 	 * Create the wizard.
 	 */
 	public AdvancedOptionsPage() {
-		super(AdvancedOptionsPage.class.getName());
-		setTitle("Advanced Options");
-		setDescription("Set advanced options.");
+		super(TITLE, DESCRIPTION);
+		createControls();
+		layoutControls();
 	}
 
-	/**
-	 * Create contents of the wizard.
-	 * 
-	 * @param parent
-	 */
-	@Override
-	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new MigLayout("", "[grow]"));
-		setControl(container);
-
-		createNetworkGroup(container);
-		createCompressionGroup(container);
-		createEncryptionGroup(container);
-
-		bindComponents();
+	private void createControls() {
+		listeningAddressComboBox = new JComboBox(); // TODO: Add some kind of model
+		listeningAddressComboBox.setName(LISTENING_ADDRESS_COMBO_BOX_NAME);
+		// TODO listeningAddressComboBox.setValue(PropertyManager.getListeningAddress());
+		
+		portTextField = new JTextField(); // TODO: Add validation
+		portTextField.setName(PORT_TEXT_FIELD_NAME);
+		portTextField.setText(String.valueOf(PropertyManager.getListeningPort()));
+		
+		enableUpnpPortMappingCheckBox = new JCheckBox("Enable UPnP port mapping");
+		enableUpnpPortMappingCheckBox.setName(ENABLE_UPNP_PORT_MAPPING_CHECK_BOX_NAME);
+		enableUpnpPortMappingCheckBox.setEnabled(PropertyManager.isUsingUpnp());
+		
+		enableNatPmpPortMappingCheckBox = new JCheckBox("Enable NAT-PMP port mapping");
+		enableNatPmpPortMappingCheckBox.setName(ENABLE_NAT_PMP_PORT_MAPPING_CHECK_BOX_NAME);
+		enableNatPmpPortMappingCheckBox.setEnabled(PropertyManager.isUsingNatPmp());
+		
+		enableCompressionCheckBox = new JCheckBox("Enable compression");
+		enableCompressionCheckBox.setName(ENABLE_COMPRESSION_CHECK_BOX_NAME);
+		// TODO enableCompressionCheckBox.setEnabled(PropertyManager.isUsingCompression());
+		
+		compressionRateLabel = new JLabel("Rate:"); // TODO: Add some kind of model
+		
+		compressionRateComboBox = new JComboBox(); // TODO: Add some kind of model
+		compressionRateComboBox.setName(COMPRESSION_RATE_COMBO_BOX_NAME);
+		// TODO compressionRateComboBox.setValue(PropertyManager.getCompressionRate());
+		
+		enableEncryptionCheckBox = new JCheckBox("Enable encryption");
+		enableEncryptionCheckBox.setName(ENABLE_ENCRYPTION_CHECK_BOX_NAME);
+		// TODO enableEncryptionCheckBox.setEnabled(PropertyManager.isUsingEncryption());
+		
+		encryptionKeyLabel = new JLabel("Encryption key"); // TODO: Add some kind of model
+		
+		encryptionKeyTextField = new JTextField();
+		encryptionKeyTextField.setName(ENCRYPTION_KEY_TEXT_FIELD);
 	}
 
-	private void createNetworkGroup(Composite container) {
-		Group networkGroup = new Group(container, SWT.NONE);
-		networkGroup.setLayoutData("growx, wrap");
-		networkGroup.setLayout(new MigLayout("", "[][right, grow]"));
-		networkGroup.setText("Network");
+	private void layoutControls() {
+		setLayout(new MigLayout("", "[grow]"));
+		
+		// Network
+		JPanel networkPanel = new JPanel(new MigLayout("", "[][right, grow]"));
+		networkPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Network"));
+		add(networkPanel, "growx, wrap");
 
-		Label listeningAddressLabel = new Label(networkGroup, SWT.NONE);
-		listeningAddressLabel.setText("Listening address:");
+		networkPanel.add(new JLabel("Listening address:"));
+		networkPanel.add(listeningAddressComboBox, "wrap");
 
-		listeningAddressComboViewer = new ComboViewer(networkGroup, SWT.READ_ONLY);
-		listeningAddressComboViewer
-				.setContentProvider(new ArrayContentProvider());
-		listeningAddressComboViewer
-				.setLabelProvider(new Inet4AddressLabelProvider());
-
-		listeningAddressComboViewer.setInput(NetworkUtils.listInetAddresses());
-		listeningAddressCombo = listeningAddressComboViewer.getCombo();
-		listeningAddressCombo.setLayoutData("wrap");
-		listeningAddressCombo.select(0);
-
-		Label portLabel = new Label(networkGroup, SWT.NONE);
-		portLabel.setText("Port:");
-
-		portText = new Text(networkGroup, SWT.BORDER);
-		portText.setLayoutData("wrap, width 50");
-		portText.addVerifyListener(new PortVerifyListener());
-		portText.setText(Integer.toString(PropertyManager.getListeningPort()));
-
-		enableUpnpPortMappingButton = new Button(networkGroup, SWT.CHECK);
-		enableUpnpPortMappingButton.setLayoutData("wrap, span 2");
-		enableUpnpPortMappingButton.setText("Enable UPnP port mapping");
-		enableUpnpPortMappingButton.setSelection(PropertyManager.isUsingUpnp());
-
-		enableNatpmpPortMappingButton = new Button(networkGroup, SWT.CHECK);
-		enableNatpmpPortMappingButton.setLayoutData("span 2");
-		enableNatpmpPortMappingButton.setText("Enable NAT-PMP port mapping");
-		enableNatpmpPortMappingButton.setSelection(PropertyManager.isUsingNatPmp());
+		networkPanel.add(new JLabel("Port:"));
+		networkPanel.add(portTextField, "wrap, width 50");
+		
+		networkPanel.add(enableUpnpPortMappingCheckBox, "wrap, span 2");
+		
+		networkPanel.add(enableNatPmpPortMappingCheckBox, "span 2");
+		
+		//createCompressionGroup();
+		//createEncryptionGroup();
 	}
 	
 	private void createCompressionGroup(Composite container) {

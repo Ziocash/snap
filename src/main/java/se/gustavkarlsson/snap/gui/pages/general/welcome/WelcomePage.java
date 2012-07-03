@@ -1,66 +1,52 @@
 package se.gustavkarlsson.snap.gui.pages.general.welcome;
 
-import net.miginfocom.swt.MigLayout;
+import java.awt.event.KeyEvent;
 
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButton;
 
-import se.gustavkarlsson.snap.gui.pages.send.choosefiles.ChooseFilesPage;
+import net.miginfocom.swing.MigLayout;
+import se.gustavkarlsson.snap.gui.SnapWizardPage;
 import se.gustavkarlsson.snap.main.Snap;
 
-public class WelcomePage extends WizardPage {
-
-	private Button sendButton;
-	private Button receiveButton;
-
+public class WelcomePage extends SnapWizardPage {
+	private static final long serialVersionUID = 1L;
+	
+	private static final String CANONICAL_NAME = WelcomePage.class.getCanonicalName();
+	
+	private static final String TITLE = "Welcome to " + Snap.APP_NAME;
+	private static final String DESCRIPTION = "Do you want to save or receive files?";
+	
+	public static final String SEND_BUTTON_NAME = CANONICAL_NAME + ":sendButton";
+	public static final String RECEIVE_BUTTON_NAME = CANONICAL_NAME + ":receiveButton";
+	
+	private JRadioButton sendButton = null;
+	private JRadioButton receiveButton = null;
+	
 	public WelcomePage() {
-		super(WelcomePage.class.getName());
-		setTitle("Welcome to " + Snap.APP_NAME);
-		setDescription("Do you want to save or receive files?");
+		super(TITLE, DESCRIPTION);
+		createControls();
+		layoutControls();
 	}
 
-	@Override
-	public void createControl(Composite parent) {
-		RadioButtonSelectedListener radioButtonSelectedListener = new RadioButtonSelectedListener();
-
-		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new MigLayout());
-		setControl(container);
-
-		sendButton = new Button(container, SWT.RADIO);
-		sendButton.addSelectionListener(radioButtonSelectedListener);
-		sendButton.setText("&Send files");
-		sendButton.setLayoutData("wrap");
-
-		receiveButton = new Button(container, SWT.RADIO);
-		receiveButton.addSelectionListener(radioButtonSelectedListener);
-		receiveButton.setText("&Receive files");
+	private void createControls() {
+		sendButton = new JRadioButton("Send", true);
+		sendButton.setName(SEND_BUTTON_NAME);
+		sendButton.setMnemonic(KeyEvent.VK_S);
+		
+		receiveButton = new JRadioButton("Receive");
+		receiveButton.setName(RECEIVE_BUTTON_NAME);
+		receiveButton.setMnemonic(KeyEvent.VK_R);
+		
+		ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(sendButton);
+		buttonGroup.add(receiveButton);
 	}
-
-	@Override
-	public boolean isPageComplete() {
-		return getNextPage() != null;
-	}
-
-	@Override
-	public IWizardPage getNextPage() {
-		if (sendButton.getSelection()) {
-			return getWizard().getPage(ChooseFilesPage.class.getName());
-		} else if (receiveButton.getSelection()) {
-			// TODO return receive page
-		}
-		return null;
-	}
-
-	private class RadioButtonSelectedListener extends SelectionAdapter {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			getWizard().getContainer().updateButtons();
-		}
+	
+	private void layoutControls() {
+		setLayout(new MigLayout());
+		
+		add(sendButton, "wrap");
+		add(receiveButton);
 	}
 }
