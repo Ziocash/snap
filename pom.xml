@@ -14,24 +14,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<repositories>
-		<repository>
-            <id>objectdb</id>
-            <name>ObjectDB Repository</name>
-            <url>http://m2.objectdb.com</url>
-        </repository>
-        <repository>
-        	<id>eclipse-testing</id>
-        	<name>Eclipse Testing Repository</name>
-        	<url>http://maven.eclipse.org/nexus/content/repositories/testing</url>
-        </repository>
-        <repository>
-            <id>miglayout</id>
-            <name>MiGLayout</name>
-            <url>http://www.miglayout.com/mavensite/</url>
-        </repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -55,14 +37,14 @@
 			<version>4.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.ciscavate</groupId>
-			<artifactId>cjwizards</artifactId>
-			<version>0.2</version>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.1</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
+			<groupId>se.gustavkarlsson</groupId>
+			<artifactId>g-wiz</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
