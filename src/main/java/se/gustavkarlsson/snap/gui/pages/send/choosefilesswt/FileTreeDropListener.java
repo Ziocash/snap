@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.gui.pages.send.choosefiles;
+package se.gustavkarlsson.snap.gui.pages.send.choosefilesswt;
 
 import java.io.File;
 import java.util.List;
