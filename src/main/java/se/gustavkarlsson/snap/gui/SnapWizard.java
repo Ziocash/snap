@@ -4,8 +4,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
@@ -35,6 +33,8 @@ public class SnapWizard extends JFrame implements Wizard {
 	public SnapWizard(String title) {
 		super(title);
 		setupWizard();
+
+		setMinimumSize(new Dimension(500, 400));
 	}
 
 	/**
@@ -69,8 +69,6 @@ public class SnapWizard extends JFrame implements Wizard {
 		previousButton.setMnemonic(KeyEvent.VK_P);
 		nextButton.setMnemonic(KeyEvent.VK_N);
 		finishButton.setMnemonic(KeyEvent.VK_F);
-
-		wizardPageContainer.addContainerListener(new GrowFrameOnComponentAddedListener());
 	}
 
 	/**
@@ -112,23 +110,5 @@ public class SnapWizard extends JFrame implements Wizard {
 	@Override
 	public JButton getFinishButton() {
 		return finishButton;
-	}
-
-	private class GrowFrameOnComponentAddedListener implements ContainerListener {
-
-		@Override
-		public void componentAdded(ContainerEvent e) {
-			Dimension preferredSize = getPreferredSize();
-			Dimension currentSize = getSize();
-			Dimension newSize = new Dimension(currentSize);
-			newSize.width = (preferredSize.width > currentSize.width ? preferredSize.width : currentSize.width);
-			newSize.height = (preferredSize.height > currentSize.height ? preferredSize.height : currentSize.height);
-			setSize(newSize);
-		}
-
-		@Override
-		public void componentRemoved(ContainerEvent e) {
-		}
-
 	}
 }

@@ -14,34 +14,27 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
-import se.gustavkarlsson.snap.gui.SnapWizardPage;
+import se.gustavkarlsson.gwiz.AbstractWizardPage;
+import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
+import se.gustavkarlsson.snap.gui.pages.send.advancedoptions.old.CompressionRateLabelProvider;
 import se.gustavkarlsson.snap.resources.PropertyManager;
 import se.gustavkarlsson.snap.util.PasswordUtils;
 import se.gustavkarlsson.snap.util.PasswordUtils.Strength;
 
 public class AdvancedOptionsPage extends SnapWizardPage {
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final String CANONICAL_NAME = AdvancedOptionsPage.class.getCanonicalName();
 
 	private static final String TITLE = "Advanced Options";
 	private static final String DESCRIPTION = "Set advanced options.";
-	
-	public static final String LISTENING_ADDRESS_COMBO_BOX_NAME = CANONICAL_NAME + ":listeningAddressComboBox";
-	public static final String PORT_TEXT_FIELD_NAME = CANONICAL_NAME + ":portTextField";
-	public static final String ENABLE_UPNP_PORT_MAPPING_CHECK_BOX_NAME = CANONICAL_NAME + ":enableUpnpPortMappingCheckBox";
-	public static final String ENABLE_NAT_PMP_PORT_MAPPING_CHECK_BOX_NAME = CANONICAL_NAME + ":enableNatPmpPortMappingCheckBox";
-	public static final String ENABLE_COMPRESSION_CHECK_BOX_NAME = CANONICAL_NAME + ":enableCompressionCheckBox";
-	public static final String COMPRESSION_RATE_COMBO_BOX_NAME = CANONICAL_NAME + ":compressionRateComboBox";
-	public static final String ENABLE_ENCRYPTION_CHECK_BOX_NAME = CANONICAL_NAME + ":enableEncryptionCheckBox";
-	public static final String ENCRYPTION_KEY_TEXT_FIELD = CANONICAL_NAME + ":encryptionKeyTextField";
-	
+
 	private JComboBox listeningAddressComboBox = null;
 	private JTextField portTextField = null;
-	
+
 	private JCheckBox enableUpnpPortMappingCheckBox = null;
 	private JCheckBox enableNatPmpPortMappingCheckBox = null;
-	
+
 	private JCheckBox enableCompressionCheckBox = null;
 	private JLabel compressionRateLabel = null;
 	private JComboBox compressionRateComboBox = null;
@@ -61,63 +54,55 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 
 	private void createControls() {
 		listeningAddressComboBox = new JComboBox(); // TODO: Add some kind of model
-		listeningAddressComboBox.setName(LISTENING_ADDRESS_COMBO_BOX_NAME);
 		// TODO listeningAddressComboBox.setValue(PropertyManager.getListeningAddress());
-		
+
 		portTextField = new JTextField(); // TODO: Add validation
-		portTextField.setName(PORT_TEXT_FIELD_NAME);
 		portTextField.setText(String.valueOf(PropertyManager.getListeningPort()));
-		
+
 		enableUpnpPortMappingCheckBox = new JCheckBox("Enable UPnP port mapping");
-		enableUpnpPortMappingCheckBox.setName(ENABLE_UPNP_PORT_MAPPING_CHECK_BOX_NAME);
 		enableUpnpPortMappingCheckBox.setEnabled(PropertyManager.isUsingUpnp());
-		
+
 		enableNatPmpPortMappingCheckBox = new JCheckBox("Enable NAT-PMP port mapping");
-		enableNatPmpPortMappingCheckBox.setName(ENABLE_NAT_PMP_PORT_MAPPING_CHECK_BOX_NAME);
 		enableNatPmpPortMappingCheckBox.setEnabled(PropertyManager.isUsingNatPmp());
-		
+
 		enableCompressionCheckBox = new JCheckBox("Enable compression");
-		enableCompressionCheckBox.setName(ENABLE_COMPRESSION_CHECK_BOX_NAME);
 		// TODO enableCompressionCheckBox.setEnabled(PropertyManager.isUsingCompression());
-		
+
 		compressionRateLabel = new JLabel("Rate:"); // TODO: Add some kind of model
-		
+
 		compressionRateComboBox = new JComboBox(); // TODO: Add some kind of model
-		compressionRateComboBox.setName(COMPRESSION_RATE_COMBO_BOX_NAME);
 		// TODO compressionRateComboBox.setValue(PropertyManager.getCompressionRate());
-		
+
 		enableEncryptionCheckBox = new JCheckBox("Enable encryption");
-		enableEncryptionCheckBox.setName(ENABLE_ENCRYPTION_CHECK_BOX_NAME);
 		// TODO enableEncryptionCheckBox.setEnabled(PropertyManager.isUsingEncryption());
-		
+
 		encryptionKeyLabel = new JLabel("Encryption key"); // TODO: Add some kind of model
-		
+
 		encryptionKeyTextField = new JTextField();
-		encryptionKeyTextField.setName(ENCRYPTION_KEY_TEXT_FIELD);
 	}
 
 	private void layoutControls() {
-		setLayout(new MigLayout("", "[grow]"));
-		
+		getContentPanel().setLayout(new MigLayout("", "[grow]"));
+
 		// Network
 		JPanel networkPanel = new JPanel(new MigLayout("", "[][right, grow]"));
 		networkPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Network"));
-		add(networkPanel, "growx, wrap");
+		getContentPanel().add(networkPanel, "growx, wrap");
 
 		networkPanel.add(new JLabel("Listening address:"));
 		networkPanel.add(listeningAddressComboBox, "wrap");
 
 		networkPanel.add(new JLabel("Port:"));
 		networkPanel.add(portTextField, "wrap, width 50");
-		
+
 		networkPanel.add(enableUpnpPortMappingCheckBox, "wrap, span 2");
-		
+
 		networkPanel.add(enableNatPmpPortMappingCheckBox, "span 2");
-		
+
 		//createCompressionGroup();
 		//createEncryptionGroup();
 	}
-	
+
 	private void createCompressionGroup(Composite container) {
 		Group compressionGroup = new Group(container, SWT.NONE);
 		compressionGroup.setLayoutData("growx, wrap");
@@ -137,7 +122,7 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 		compressionRateCombo = compressionRateComboViewer.getCombo();
 		compressionRateCombo.select(1);
 	}
-	
+
 	private void createEncryptionGroup(Composite container) {
 		encryptionGroup = new Group(container, SWT.NONE);
 		encryptionGroup.setLayoutData("growx");
@@ -153,9 +138,9 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 		encryptionKeyText = new Text(encryptionGroup, SWT.BORDER | SWT.PASSWORD);
 		encryptionKeyText.setLayoutData("width 150");
 		encryptionKeyText
-				.addVerifyListener(new EncryptionKeyVerifyListener());
+		.addVerifyListener(new EncryptionKeyVerifyListener());
 	}
-	
+
 	private void bindComponents() {
 		DataBindingContext bindingContext = new DataBindingContext(
 				SWTObservables.getRealm(Display.getCurrent()));
@@ -166,7 +151,7 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 		IObservableValue compressionRateComboEnabled = WidgetProperties.enabled().observe(compressionRateCombo);
 		bindingContext.bindValue(enableCompressionButtonSelection, compressionRateLabelEnabled);
 		bindingContext.bindValue(enableCompressionButtonSelection, compressionRateComboEnabled);
-		
+
 		// Encryption widgets enabled
 		IObservableValue enableEncryptionButtonSelection = WidgetProperties.selection().observe(enableEncryptionButton);
 		IObservableValue encryptionKeyLabelEnabled = WidgetProperties.enabled().observe(encryptionKeyLabel);
@@ -180,7 +165,7 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 		UpdateValueStrategy encryptionKeyToColorConverter = new UpdateValueStrategy().setConverter(new EncryptionKeyToColorConverter());
 		bindingContext.bindValue(encryptionKeyTextModify, encryptionKeyTextForeground, encryptionKeyToColorConverter, null);
 	}
-	
+
 	private class EncryptionKeyToColorConverter implements IConverter {
 		@Override
 		public Object convert(Object encryptionKey) {
@@ -246,7 +231,7 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 			} else {
 				try {
 					int portNumber = Integer.parseInt(newText);
-					if (0 <= portNumber && portNumber <= 65535) {
+					if ((0 <= portNumber) && (portNumber <= 65535)) {
 						event.doit = true;
 						valid = true;
 					}
@@ -281,5 +266,23 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 					.toDisplay(encryptionKeyText.getSize()));
 			balloon.setVisible(!event.doit);
 		}
+	}
+
+	@Override
+	protected AbstractWizardPage getNextPage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected boolean isCompleted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected boolean canFinish() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

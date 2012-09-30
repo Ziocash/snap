@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.gui.pages.send.advancedoptions;
+package se.gustavkarlsson.snap.gui.pages.send.advancedoptions.old;
 
 import org.eclipse.jface.viewers.LabelProvider;
 

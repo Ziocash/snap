@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.gui.pages.send.choosefilesswt;
+package se.gustavkarlsson.snap.gui.pages.send.choosefiles.old;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;

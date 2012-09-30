@@ -1,24 +1,22 @@
-package se.gustavkarlsson.snap.gui.pages.send.choosefilesswt;
+package se.gustavkarlsson.snap.gui.pages.send.choosefiles;
 
 import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.AbstractWizardPage;
+import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
+import se.gustavkarlsson.snap.gui.pages.send.advancedoptions.AdvancedOptionsPage;
 
-public class ChooseFilesPage extends AbstractWizardPage {
-	private static final long serialVersionUID = 1L;
-
-	private static final String CANONICAL_NAME = ChooseFilesPage.class.getCanonicalName();
+@SuppressWarnings("serial")
+public class ChooseFilesPage extends SnapWizardPage {
 
 	private static final String TITLE = "Choose Files";
 	private static final String DESCRIPTION = "Use the \"Browse\" button or drag and drop from your OS.";
-
-	public static final String FILE_TREE_NAME = CANONICAL_NAME + ":fileTree";
-	public static final String ENABLE_ADVANCED_OPTIONS_BUTTON_NAME = CANONICAL_NAME + ":enableAdvancedOptionsButton";
 
 	private JTree fileTree = null;
 	private JCheckBox enableAdvancedOptionsButton = null;
@@ -34,18 +32,36 @@ public class ChooseFilesPage extends AbstractWizardPage {
 
 	private void createControls() {
 		fileTree = new JTree();
-		fileTree.setName(FILE_TREE_NAME);
-		fileTree.setBorder(BorderFactory.createLoweredBevelBorder());
 
 		enableAdvancedOptionsButton = new JCheckBox("Enable Advanced Options");
-		enableAdvancedOptionsButton.setName(ENABLE_ADVANCED_OPTIONS_BUTTON_NAME);
 		enableAdvancedOptionsButton.setMnemonic(KeyEvent.VK_A);
 	}
 
 	private void layoutControls() {
-		setLayout(new MigLayout("", "[grow]", "[grow][]"));
-		add(fileTree, "grow, wrap");
+		getContentPanel().setLayout(new MigLayout("", "[grow]", "[grow][]"));
 
-		add(enableAdvancedOptionsButton);
+		JScrollPane treeView = new JScrollPane(fileTree);
+		treeView.setBorder(BorderFactory.createLoweredBevelBorder());
+
+		getContentPanel().add(treeView, "grow, wrap");
+
+		getContentPanel().add(enableAdvancedOptionsButton);
+	}
+
+	@Override
+	protected AbstractWizardPage getNextPage() {
+		return new AdvancedOptionsPage();
+	}
+
+	@Override
+	protected boolean isCompleted() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	protected boolean canFinish() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

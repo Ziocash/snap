@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.gui.pages.send.advancedoptions;
+package se.gustavkarlsson.snap.gui.pages.send.advancedoptions.old;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
