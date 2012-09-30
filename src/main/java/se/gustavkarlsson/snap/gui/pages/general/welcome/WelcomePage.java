@@ -1,5 +1,7 @@
 package se.gustavkarlsson.snap.gui.pages.general.welcome;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ButtonGroup;
@@ -29,9 +31,11 @@ public class WelcomePage extends SnapWizardPage {
 	private void setupControls() {
 		sendButton = new JRadioButton("Send", true);
 		sendButton.setMnemonic(KeyEvent.VK_S);
+		sendButton.addActionListener(new UpdateButtonsListener());
 
 		receiveButton = new JRadioButton("Receive");
 		receiveButton.setMnemonic(KeyEvent.VK_R);
+		receiveButton.addActionListener(new UpdateButtonsListener());
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(sendButton);
@@ -58,5 +62,14 @@ public class WelcomePage extends SnapWizardPage {
 	@Override
 	protected boolean canFinish() {
 		return false;
+	}
+
+	private class UpdateButtonsListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			updateButtons();
+		}
+
 	}
 }
