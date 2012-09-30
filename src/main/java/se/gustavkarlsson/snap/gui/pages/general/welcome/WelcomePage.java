@@ -1,40 +1,32 @@
 package se.gustavkarlsson.snap.gui.pages.general.welcome;
 
-import java.awt.Font;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.AbstractWizardPage;
+import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
+import se.gustavkarlsson.snap.gui.pages.send.choosefiles.ChooseFilesPage;
 import se.gustavkarlsson.snap.main.Snap;
 
 @SuppressWarnings("serial")
-public class WelcomePage extends AbstractWizardPage {
+public class WelcomePage extends SnapWizardPage {
 
 	private static final String TITLE = "Welcome to " + Snap.APP_NAME;
 	private static final String DESCRIPTION = "Do you want to save or receive files?";
 
-	private JLabel titleLabel = null;
-	private JLabel descriptionLabel = null;
 	private JRadioButton sendButton = null;
 	private JRadioButton receiveButton = null;
 
 	public WelcomePage() {
+		super(TITLE, DESCRIPTION);
 		setupControls();
 		layoutControls();
 	}
 
 	private void setupControls() {
-		titleLabel = new JLabel(TITLE);
-		titleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-
-		descriptionLabel = new JLabel(DESCRIPTION);
-		descriptionLabel.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 10));
-
 		sendButton = new JRadioButton("Send", true);
 		sendButton.setMnemonic(KeyEvent.VK_S);
 
@@ -47,22 +39,15 @@ public class WelcomePage extends AbstractWizardPage {
 	}
 
 	private void layoutControls() {
-		setLayout(new MigLayout("wrap 1", "[grow]"));
+		getContentPanel().setLayout(new MigLayout());
 
-		add(titleLabel, "align center");
-		add(descriptionLabel, "align center");
-
-		JPanel buttonsPanel = new JPanel(new MigLayout());
-		buttonsPanel.add(sendButton);
-		buttonsPanel.add(receiveButton);
-
-		add(buttonsPanel, "align center");
+		getContentPanel().add(sendButton, "wrap");
+		getContentPanel().add(receiveButton);
 	}
 
 	@Override
 	protected AbstractWizardPage getNextPage() {
-		// TODO Auto-generated method stub
-		return new WelcomePage();
+		return sendButton.isSelected() ? new ChooseFilesPage() : null;
 	}
 
 	@Override
@@ -72,7 +57,6 @@ public class WelcomePage extends AbstractWizardPage {
 
 	@Override
 	protected boolean canFinish() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

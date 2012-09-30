@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.gui.pages.send.choosefiles;
+package se.gustavkarlsson.snap.gui.pages.send.choosefilesswt;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;

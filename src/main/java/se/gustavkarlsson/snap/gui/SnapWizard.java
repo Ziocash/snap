@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.Wizard;
@@ -76,11 +77,11 @@ public class SnapWizard extends JFrame implements Wizard {
 	 * Lays out the components in the wizards content pane.
 	 */
 	private void layoutComponents() {
-		setLayout(new MigLayout("wrap 1", "[grow]", "[grow][]"));
+		setLayout(new MigLayout("insets 0", "[grow]", "[grow]"));
 
 		// Make WizardPages inside container fill all available space
 		wizardPageContainer.setLayout(new GridLayout(1, 1));
-		add(wizardPageContainer, "grow");
+		add(wizardPageContainer, "grow, wrap");
 
 		// Make container grow automatically
 		JPanel buttonPanel = new JPanel(new MigLayout());
@@ -89,6 +90,7 @@ public class SnapWizard extends JFrame implements Wizard {
 		buttonPanel.add(nextButton);
 		buttonPanel.add(finishButton);
 
+		add(new JSeparator(), "grow, wrap");
 		add(buttonPanel, "right");
 	}
 
