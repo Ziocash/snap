@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -95,6 +96,11 @@ public class SnapWizard extends JFrame implements Wizard {
 	@Override
 	public JPanel getWizardPageContainer() {
 		return wizardPageContainer;
+	}
+
+	@Override
+	public AbstractButton getCancelButton() {
+		return cancelButton;
 	}
 
 	@Override

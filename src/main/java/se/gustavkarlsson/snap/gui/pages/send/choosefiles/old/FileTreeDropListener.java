@@ -105,7 +105,7 @@ public class FileTreeDropListener extends ViewerDropAdapter {
 				// TODO: handle error
 			}
 			
-			for (Node child : ((FolderNode) currentNode).getChildren()) {
+			for (Node child : ((FolderNode) currentNode).listChildren()) {
 				if (child.getName().equals(nextNodeName)) {
 					currentNode = child;
 					path.remove(0);

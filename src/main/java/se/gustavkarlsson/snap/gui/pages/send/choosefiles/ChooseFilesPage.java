@@ -54,14 +54,23 @@ public class ChooseFilesPage extends SnapWizardPage {
 	}
 
 	@Override
-	protected boolean isCompleted() {
+	protected boolean isCancelAllowed() {
+		return true;
+	}
+
+	@Override
+	protected boolean isPreviousAllowed() {
+		return true;
+	}
+
+	@Override
+	protected boolean isNextAllowed() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	protected boolean canFinish() {
-		// TODO Auto-generated method stub
-		return false;
+	protected boolean isFinishAllowed() {
+		return true;
 	}
 }

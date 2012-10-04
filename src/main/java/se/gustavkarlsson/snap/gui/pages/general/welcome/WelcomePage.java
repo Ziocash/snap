@@ -55,12 +55,22 @@ public class WelcomePage extends SnapWizardPage {
 	}
 
 	@Override
-	protected boolean isCompleted() {
+	protected boolean isCancelAllowed() {
+		return true;
+	}
+
+	@Override
+	protected boolean isPreviousAllowed() {
+		return false;
+	}
+
+	@Override
+	protected boolean isNextAllowed() {
 		return sendButton.isSelected() || receiveButton.isSelected();
 	}
 
 	@Override
-	protected boolean canFinish() {
+	protected boolean isFinishAllowed() {
 		return false;
 	}
 
@@ -68,7 +78,7 @@ public class WelcomePage extends SnapWizardPage {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			updateButtons();
+			updateWizardButtons();
 		}
 
 	}

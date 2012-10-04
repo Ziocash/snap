@@ -99,8 +99,8 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 
 		networkPanel.add(enableNatPmpPortMappingCheckBox, "span 2");
 
-		//createCompressionGroup();
-		//createEncryptionGroup();
+		// createCompressionGroup();
+		// createEncryptionGroup();
 	}
 
 	private void createCompressionGroup(Composite container) {
@@ -137,16 +137,15 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 
 		encryptionKeyText = new Text(encryptionGroup, SWT.BORDER | SWT.PASSWORD);
 		encryptionKeyText.setLayoutData("width 150");
-		encryptionKeyText
-		.addVerifyListener(new EncryptionKeyVerifyListener());
+		encryptionKeyText.addVerifyListener(new EncryptionKeyVerifyListener());
 	}
 
 	private void bindComponents() {
-		DataBindingContext bindingContext = new DataBindingContext(
-				SWTObservables.getRealm(Display.getCurrent()));
+		DataBindingContext bindingContext = new DataBindingContext(SWTObservables.getRealm(Display.getCurrent()));
 
 		// Compression widgets enabled
-		IObservableValue enableCompressionButtonSelection = WidgetProperties.selection().observe(enableCompressionButton);
+		IObservableValue enableCompressionButtonSelection = WidgetProperties.selection().observe(
+				enableCompressionButton);
 		IObservableValue compressionRateLabelEnabled = WidgetProperties.enabled().observe(compressionRateLabel);
 		IObservableValue compressionRateComboEnabled = WidgetProperties.enabled().observe(compressionRateCombo);
 		bindingContext.bindValue(enableCompressionButtonSelection, compressionRateLabelEnabled);
@@ -162,15 +161,16 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 		// Encryption key color
 		IObservableValue encryptionKeyTextModify = WidgetProperties.text(SWT.Modify).observe(encryptionKeyText);
 		IObservableValue encryptionKeyTextForeground = WidgetProperties.foreground().observe(encryptionKeyText);
-		UpdateValueStrategy encryptionKeyToColorConverter = new UpdateValueStrategy().setConverter(new EncryptionKeyToColorConverter());
-		bindingContext.bindValue(encryptionKeyTextModify, encryptionKeyTextForeground, encryptionKeyToColorConverter, null);
+		UpdateValueStrategy encryptionKeyToColorConverter = new UpdateValueStrategy()
+		.setConverter(new EncryptionKeyToColorConverter());
+		bindingContext.bindValue(encryptionKeyTextModify, encryptionKeyTextForeground, encryptionKeyToColorConverter,
+				null);
 	}
 
 	private class EncryptionKeyToColorConverter implements IConverter {
 		@Override
 		public Object convert(Object encryptionKey) {
-			Strength encryptionKeyStrength = PasswordUtils
-					.checkStrength((String) encryptionKey);
+			Strength encryptionKeyStrength = PasswordUtils.checkStrength((String) encryptionKey);
 
 			Color color;
 			switch (encryptionKeyStrength) {
@@ -210,8 +210,7 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 
 	private class PortVerifyListener implements VerifyListener {
 
-		private final ToolTip balloon = new ToolTip(getShell(), SWT.BALLOON
-				| SWT.ICON_ERROR);
+		private final ToolTip balloon = new ToolTip(getShell(), SWT.BALLOON | SWT.ICON_ERROR);
 
 		public PortVerifyListener() {
 			balloon.setMessage("Valid ports range from 0 to 65535");
@@ -222,8 +221,8 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 			event.doit = false;
 			boolean valid = false;
 
-			String newText = portText.getText().substring(0, event.start)
-					+ event.text + portText.getText().substring(event.end);
+			String newText = portText.getText().substring(0, event.start) + event.text
+					+ portText.getText().substring(event.end);
 
 			if (newText.equals("")) {
 				// Let user empty the field, but don't accept it as valid
@@ -246,8 +245,7 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 
 	private class EncryptionKeyVerifyListener implements VerifyListener {
 
-		private final ToolTip balloon = new ToolTip(getShell(), SWT.BALLOON
-				| SWT.ICON_ERROR);
+		private final ToolTip balloon = new ToolTip(getShell(), SWT.BALLOON | SWT.ICON_ERROR);
 
 		public EncryptionKeyVerifyListener() {
 			balloon.setMessage("Invalid character input");
@@ -255,15 +253,12 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 
 		@Override
 		public void verifyText(VerifyEvent event) {
-			String newText = encryptionKeyText.getText().substring(0,
-					event.start)
-					+ event.text
+			String newText = encryptionKeyText.getText().substring(0, event.start) + event.text
 					+ encryptionKeyText.getText().substring(event.end);
 
 			event.doit = PasswordUtils.checkValidity(newText);
 
-			balloon.setLocation(encryptionKeyText
-					.toDisplay(encryptionKeyText.getSize()));
+			balloon.setLocation(encryptionKeyText.toDisplay(encryptionKeyText.getSize()));
 			balloon.setVisible(!event.doit);
 		}
 	}
@@ -275,14 +270,23 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 	}
 
 	@Override
-	protected boolean isCompleted() {
+	protected boolean isCancelAllowed() {
+		return true;
+	}
+
+	@Override
+	protected boolean isPreviousAllowed() {
+		return true;
+	}
+
+	@Override
+	protected boolean isNextAllowed() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	protected boolean canFinish() {
-		// TODO Auto-generated method stub
+	protected boolean isFinishAllowed() {
 		return false;
 	}
 }
