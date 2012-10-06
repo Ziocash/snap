@@ -82,12 +82,12 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 	}
 
 	private void layoutControls() {
-		getContentPanel().setLayout(new MigLayout("", "[grow]"));
+		getPageContentPanel().setLayout(new MigLayout("", "[grow]"));
 
 		// Network
 		JPanel networkPanel = new JPanel(new MigLayout("", "[][right, grow]"));
 		networkPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Network"));
-		getContentPanel().add(networkPanel, "growx, wrap");
+		getPageContentPanel().add(networkPanel, "growx, wrap");
 
 		networkPanel.add(new JLabel("Listening address:"));
 		networkPanel.add(listeningAddressComboBox, "wrap");

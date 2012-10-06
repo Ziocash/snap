@@ -1,11 +1,7 @@
 package se.gustavkarlsson.snap.gui.pages.general.welcome;
 
-<<<<<<< HEAD
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-=======
-import java.awt.Color;
->>>>>>> b8c0167336a260717bfa546383138372fe9af2f6
 import java.awt.event.KeyEvent;
 
 import javax.swing.ButtonGroup;
@@ -14,10 +10,7 @@ import javax.swing.JRadioButton;
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.AbstractWizardPage;
 import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
-<<<<<<< HEAD
 import se.gustavkarlsson.snap.gui.pages.send.choosefiles.ChooseFilesPage;
-=======
->>>>>>> b8c0167336a260717bfa546383138372fe9af2f6
 import se.gustavkarlsson.snap.main.Snap;
 
 @SuppressWarnings("serial")
@@ -47,18 +40,13 @@ public class WelcomePage extends SnapWizardPage {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(sendButton);
 		buttonGroup.add(receiveButton);
-
-		if ((System.currentTimeMillis() % 2) == 0) {
-			getContentPanel().setBackground(Color.GREEN);
-		}
 	}
 
 	private void layoutControls() {
-		getContentPanel().setLayout(new MigLayout());
-<<<<<<< HEAD
+		getPageContentPanel().setLayout(new MigLayout());
 
-		getContentPanel().add(sendButton, "wrap");
-		getContentPanel().add(receiveButton);
+		getPageContentPanel().add(sendButton, "wrap");
+		getPageContentPanel().add(receiveButton);
 	}
 
 	@Override
@@ -69,11 +57,6 @@ public class WelcomePage extends SnapWizardPage {
 	@Override
 	protected boolean isCancelAllowed() {
 		return true;
-=======
-
-		getContentPanel().add(sendButton, "wrap");
-		getContentPanel().add(receiveButton);
->>>>>>> b8c0167336a260717bfa546383138372fe9af2f6
 	}
 
 	@Override
