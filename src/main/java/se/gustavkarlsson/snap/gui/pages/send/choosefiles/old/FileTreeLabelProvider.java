@@ -3,9 +3,9 @@ package se.gustavkarlsson.snap.gui.pages.send.choosefiles.old;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-import se.gustavkarlsson.snap.domain.FileNode;
-import se.gustavkarlsson.snap.domain.FolderNode;
-import se.gustavkarlsson.snap.domain.Node;
+import se.gustavkarlsson.snap.domain.old.FileNode;
+import se.gustavkarlsson.snap.domain.old.FolderNode;
+import se.gustavkarlsson.snap.domain.old.Node;
 import se.gustavkarlsson.snap.resources.Images;
 import se.gustavkarlsson.snap.resources.Strings;
 

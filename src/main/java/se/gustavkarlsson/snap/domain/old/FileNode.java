@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.domain;
+package se.gustavkarlsson.snap.domain.old;
 
 import se.gustavkarlsson.snap.resources.Strings;
 import se.gustavkarlsson.snap.util.FileUtils;

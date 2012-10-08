@@ -12,7 +12,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 
-import se.gustavkarlsson.snap.domain.Node;
+import se.gustavkarlsson.snap.domain.old.Node;
 import se.gustavkarlsson.snap.util.LoggerHelper;
 
 public class InternalFileDragListener extends DragSourceAdapter {

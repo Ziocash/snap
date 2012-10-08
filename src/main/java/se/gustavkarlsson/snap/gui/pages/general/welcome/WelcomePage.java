@@ -9,6 +9,7 @@ import javax.swing.JRadioButton;
 
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.AbstractWizardPage;
+import se.gustavkarlsson.snap.domain.SenderSettings;
 import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
 import se.gustavkarlsson.snap.gui.pages.send.choosefiles.ChooseFilesPage;
 import se.gustavkarlsson.snap.main.Snap;
@@ -21,6 +22,8 @@ public class WelcomePage extends SnapWizardPage {
 
 	private JRadioButton sendButton = null;
 	private JRadioButton receiveButton = null;
+
+	private AbstractWizardPage chooseFilesPage = new ChooseFilesPage(new SenderSettings());
 
 	public WelcomePage() {
 		super(TITLE, DESCRIPTION);
@@ -51,7 +54,7 @@ public class WelcomePage extends SnapWizardPage {
 
 	@Override
 	protected AbstractWizardPage getNextPage() {
-		return sendButton.isSelected() ? new ChooseFilesPage() : null;
+		return sendButton.isSelected() ? chooseFilesPage : null;
 	}
 
 	@Override

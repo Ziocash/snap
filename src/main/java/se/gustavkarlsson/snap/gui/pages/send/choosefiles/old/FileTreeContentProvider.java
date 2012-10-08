@@ -3,8 +3,8 @@ package se.gustavkarlsson.snap.gui.pages.send.choosefiles.old;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import se.gustavkarlsson.snap.domain.FolderNode;
-import se.gustavkarlsson.snap.domain.Node;
+import se.gustavkarlsson.snap.domain.old.FolderNode;
+import se.gustavkarlsson.snap.domain.old.Node;
 import se.gustavkarlsson.snap.resources.Strings;
 
 public class FileTreeContentProvider implements ITreeContentProvider {

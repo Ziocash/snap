@@ -4,8 +4,8 @@ import java.util.Comparator;
 
 import org.eclipse.jface.viewers.ViewerComparator;
 
-import se.gustavkarlsson.snap.domain.FileNode;
-import se.gustavkarlsson.snap.domain.FolderNode;
+import se.gustavkarlsson.snap.domain.old.FileNode;
+import se.gustavkarlsson.snap.domain.old.FolderNode;
 
 public class FileTreeViewerComparator extends ViewerComparator {
 

@@ -56,6 +56,10 @@ public class Tree<T> {
 		node.setValue(newValue);
 	}
 
+	public Tree<T> getParent() {
+		return parent;
+	}
+
 	public boolean setParent(Tree<T> newParent) {
 		if ((newParent != null) && !newParent.isChildrenAllowed()) {
 			return false;

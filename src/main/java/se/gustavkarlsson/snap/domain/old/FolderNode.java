@@ -1,4 +1,4 @@
-package se.gustavkarlsson.snap.domain;
+package se.gustavkarlsson.snap.domain.old;
 
 import java.util.Collections;
 import java.util.HashSet;

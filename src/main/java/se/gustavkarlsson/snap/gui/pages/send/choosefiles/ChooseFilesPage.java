@@ -5,6 +5,7 @@ import javax.swing.JTree;
 
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.AbstractWizardPage;
+import se.gustavkarlsson.snap.domain.SenderSettings;
 import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
 import se.gustavkarlsson.snap.main.Snap;
 
@@ -14,17 +15,23 @@ public class ChooseFilesPage extends SnapWizardPage{
 	private static final String TITLE = "Welcome to " + Snap.APP_NAME;
 	private static final String DESCRIPTION = "Do you want to save or receive files?";
 
+	private SenderSettings settings;
+
 	private JTree tree;
 	private JScrollPane scrollPane;
 
-	public ChooseFilesPage() {
+	public ChooseFilesPage(SenderSettings settings) {
 		super(TITLE, DESCRIPTION);
+		this.settings = settings;
+
 		setupControls();
 		layoutControls();
 	}
 
 	private void setupControls() {
 		tree = new JTree();
+		tree.setModel(newModel)
+
 		scrollPane = new JScrollPane(tree);
 	}
 

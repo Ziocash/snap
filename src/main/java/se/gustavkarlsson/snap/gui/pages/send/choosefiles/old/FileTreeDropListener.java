@@ -7,9 +7,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.TransferData;
 
-import se.gustavkarlsson.snap.domain.FileNode;
-import se.gustavkarlsson.snap.domain.FolderNode;
-import se.gustavkarlsson.snap.domain.Node;
+import se.gustavkarlsson.snap.domain.old.FileNode;
+import se.gustavkarlsson.snap.domain.old.FolderNode;
+import se.gustavkarlsson.snap.domain.old.Node;
 import se.gustavkarlsson.snap.util.FileUtils;
 
 public class FileTreeDropListener extends ViewerDropAdapter {
