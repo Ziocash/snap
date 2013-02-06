@@ -6,6 +6,10 @@ import se.gustavkarlsson.snap.domain.tree.Node;
 
 public class FileNode extends Node<File> {
 
+	public FileNode(File file) {
+		super(file);
+	}
+
 	@Override
 	public boolean isChildrenAllowed() {
 		return isFolder();

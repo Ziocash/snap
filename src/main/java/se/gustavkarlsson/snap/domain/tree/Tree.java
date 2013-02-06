@@ -1,20 +1,23 @@
 package se.gustavkarlsson.snap.domain.tree;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Tree<T> {
 
 	private Set<Tree<T>> treesSet = new HashSet<Tree<T>>();
 	private Tree<T> parent = null;
-	private Set<Tree<T>> children = new HashSet<Tree<T>>();
+	private List<Tree<T>> children = new ArrayList<Tree<T>>();
 	private Node<T> node = null;
 
 	Set<Tree<T>> getTreesSet() {
 		return treesSet;
 	}
 
-	Set<Tree<T>> getChildren() {
+	List<Tree<T>> getChildren() {
 		return children;
 	}
 
@@ -85,6 +88,18 @@ public class Tree<T> {
 		}
 
 		return true;
+	}
+
+	public List<Tree<T>> listChildren() {
+		return Collections.unmodifiableList(children);
+	}
+
+	public int getLevel() {
+		if (parent == null) {
+			return 1;
+		}
+
+		return 1 + parent.getLevel();
 	}
 
 	@Override
