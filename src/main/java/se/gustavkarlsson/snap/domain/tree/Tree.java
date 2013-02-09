@@ -6,22 +6,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Tree<T> {
+public abstract class Tree<T> {
 
 	private Set<Tree<T>> treesSet = new HashSet<Tree<T>>();
-	private Tree<T> parent = null;
-	private List<Tree<T>> children = new ArrayList<Tree<T>>();
-	private Node<T> node = null;
+	protected Tree<T> parent = null;
+	protected List<Tree<T>> children = new ArrayList<Tree<T>>();
+	protected T value = null;
 
-	Set<Tree<T>> getTreesSet() {
+	private Set<Tree<T>> getTreesSet() {
 		return treesSet;
 	}
 
-	List<Tree<T>> getChildren() {
+	private List<Tree<T>> getChildren() {
 		return children;
 	}
 
-	void resetTreesSet(Set<Tree<T>> newTreeNodes) {
+	private void resetTreesSet(Set<Tree<T>> newTreeNodes) {
 		// Remove from old treeNodes (others might still use it)
 		treesSet.remove(this);
 		// Set new treeNodes
@@ -35,28 +35,19 @@ public class Tree<T> {
 		}
 	}
 
-	private boolean isChildrenAllowed() {
-		return node.isChildrenAllowed();
-	}
+	protected abstract boolean isChildrenAllowed();
 
-	public Tree(Node<T> node) {
-		if (node == null) {
-			throw new IllegalArgumentException("node can't be null");
-		}
-		this.node = node;
+	public Tree(T value) {
+		this.value = value;
 		treesSet.add(this);
 	}
 
-	public Node<T> getNode() {
-		return node;
+	public T getValue() {
+		return value;
 	}
 
-	public T getNodeValue() {
-		return node.getValue();
-	}
-
-	public void setNodeValue(T newValue) {
-		node.setValue(newValue);
+	public void setValue(T value) {
+		this.value = value;
 	}
 
 	public Tree<T> getParent() {
@@ -64,6 +55,14 @@ public class Tree<T> {
 	}
 
 	public boolean setParent(Tree<T> newParent) {
+		if (this == newParent) {
+			return false;
+		}
+
+		if (parent == newParent) {
+			return true;
+		}
+
 		if ((newParent != null) && !newParent.isChildrenAllowed()) {
 			return false;
 		}
@@ -94,6 +93,14 @@ public class Tree<T> {
 		return Collections.unmodifiableList(children);
 	}
 
+	public int getChildCount() {
+		return children.size();
+	}
+
+	public boolean hasChildren() {
+		return !children.isEmpty();
+	}
+
 	public int getLevel() {
 		if (parent == null) {
 			return 1;
@@ -102,11 +109,13 @@ public class Tree<T> {
 		return 1 + parent.getLevel();
 	}
 
+	// TODO: Fix equals
 	@Override
 	public boolean equals(Object obj) {
 		return this == obj;
 	}
 
+	// TODO: Fix hashCode
 	@Override
 	public int hashCode() {
 		return 1;
@@ -114,7 +123,7 @@ public class Tree<T> {
 
 	@Override
 	public String toString() {
-		return "Tree: " + getNodeValue();
+		return value.toString();
 	}
 
 }

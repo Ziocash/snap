@@ -8,15 +8,15 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import se.gustavkarlsson.snap.domain.tree.FileTreeRoot;
 import se.gustavkarlsson.snap.domain.tree.Tree;
 
 public class FileTreeModel implements TreeModel {
 
-	// TODO: Unused
 	private final Set<TreeModelListener> treeModelListeners = new HashSet<TreeModelListener>();
-	private Tree<File> root;
+	private FileTreeRoot root;
 
-	public FileTreeModel(Tree<File> root) {
+	public FileTreeModel(FileTreeRoot root) {
 		this.root = root;
 	}
 
@@ -36,14 +36,14 @@ public class FileTreeModel implements TreeModel {
 	public int getChildCount(Object parent) {
 		//TODO handle unsafe cast
 		Tree<File> parentTree = (Tree<File>) parent;
-		return parentTree.listChildren().size();
+		return parentTree.getChildCount();
 	}
 
 	@Override
 	public boolean isLeaf(Object node) {
 		//TODO handle unsafe cast
 		Tree<File> treeNode = (Tree<File>) node;
-		return treeNode.listChildren().isEmpty();
+		return !treeNode.hasChildren();
 	}
 
 	@Override
