@@ -1,23 +1,21 @@
 package se.gustavkarlsson.snap.domain.tree;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public abstract class Tree<T> {
 
 	private Set<Tree<T>> treesSet = new HashSet<Tree<T>>();
 	protected Tree<T> parent = null;
-	protected List<Tree<T>> children = new ArrayList<Tree<T>>();
+	protected Set<Tree<T>> children = new HashSet<Tree<T>>();
 	protected T value = null;
 
 	private Set<Tree<T>> getTreesSet() {
 		return treesSet;
 	}
 
-	private List<Tree<T>> getChildren() {
+	private Set<Tree<T>> getChildren() {
 		return children;
 	}
 
@@ -89,8 +87,8 @@ public abstract class Tree<T> {
 		return true;
 	}
 
-	public List<Tree<T>> listChildren() {
-		return Collections.unmodifiableList(children);
+	public Set<Tree<T>> children() {
+		return Collections.unmodifiableSet(children);
 	}
 
 	public int getChildCount() {
@@ -109,16 +107,35 @@ public abstract class Tree<T> {
 		return 1 + parent.getLevel();
 	}
 
-	// TODO: Fix equals
-	@Override
-	public boolean equals(Object obj) {
-		return this == obj;
-	}
-
-	// TODO: Fix hashCode
 	@Override
 	public int hashCode() {
-		return 1;
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Tree other = (Tree) obj;
+		if (value == null) {
+			if (other.value != null) {
+				return false;
+			}
+		} else if (!value.equals(other.value)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

@@ -2,12 +2,12 @@ package se.gustavkarlsson.snap.domain.tree;
 
 import java.io.File;
 
-public class FileTree extends Tree<File> {
+public class FileTree extends Tree<File> implements Comparable<FileTree> {
 
-	public FileTree(File fileNode) {
-		super(fileNode);
+	public FileTree(File file) {
+		super(file);
 
-		if (fileNode == null) {
+		if (file == null) {
 			throw new IllegalArgumentException("fileNode can't be null");
 		}
 
@@ -26,8 +26,18 @@ public class FileTree extends Tree<File> {
 	}
 
 	@Override
-	public String toString() {
-		return value.getName();
+	public int compareTo(FileTree other) {
+		if (other == null) {
+			return 1;
+		}
+		if (this.getValue().isDirectory() && other.getValue().isFile()) {
+			return 1;
+		}
+		if (this.getValue().isFile() && other.getValue().isDirectory()) {
+			return -1;
+		}
+
+		return this.getValue().compareTo(other.getValue());
 	}
 
 }

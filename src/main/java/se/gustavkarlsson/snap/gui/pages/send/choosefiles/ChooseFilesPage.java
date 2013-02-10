@@ -1,14 +1,13 @@
 package se.gustavkarlsson.snap.gui.pages.send.choosefiles;
 
-import javax.swing.DropMode;
+import java.io.File;
+
+import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.tree.TreeModel;
 
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.AbstractWizardPage;
 import se.gustavkarlsson.snap.domain.SenderSettings;
-import se.gustavkarlsson.snap.domain.tree.FileTreeRoot;
 import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
 import se.gustavkarlsson.snap.main.Snap;
 
@@ -20,7 +19,7 @@ public class ChooseFilesPage extends SnapWizardPage{
 
 	private SenderSettings settings;
 
-	private JTree tree;
+	private JList fileList;
 	private JScrollPane scrollPane;
 
 	public ChooseFilesPage(SenderSettings settings) {
@@ -32,16 +31,13 @@ public class ChooseFilesPage extends SnapWizardPage{
 	}
 
 	private void setupControls() {
-		tree = new JTree();
-		FileTreeRoot root = new FileTreeRoot();
-		TreeModel model = new FileTreeModel(root);
-		tree.setModel(model);
-		tree.setDragEnabled(true);
-		tree.setRootVisible(true);
-		tree.setDropMode(DropMode.ON_OR_INSERT);
-		tree.setTransferHandler(new FileTreeTransferHandler());
+		fileList = new JList();
+		fileList.setModel(new SetListModel<File>());
+		fileList.setDragEnabled(true);
+		fileList.setCellRenderer(new FileRenderer());
+		fileList.setTransferHandler(new FileTransferHandler());
 
-		scrollPane = new JScrollPane(tree);
+		scrollPane = new JScrollPane(fileList);
 	}
 
 	private void layoutControls() {
