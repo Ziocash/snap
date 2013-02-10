@@ -3,28 +3,36 @@ package se.gustavkarlsson.snap.gui.pages.send.choosefiles;
 import java.io.File;
 
 import javax.swing.JList;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.AbstractWizardPage;
 import se.gustavkarlsson.snap.domain.SenderSettings;
+import se.gustavkarlsson.snap.gui.listeners.UpdateWizardButtonsActionListener;
+import se.gustavkarlsson.snap.gui.listeners.UpdateWizardButtonsListDataListener;
 import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
-import se.gustavkarlsson.snap.main.Snap;
+import se.gustavkarlsson.snap.gui.pages.send.advancedoptions.AdvancedOptionsPage;
 
 @SuppressWarnings("serial")
 public class ChooseFilesPage extends SnapWizardPage{
 
-	private static final String TITLE = "Welcome to " + Snap.APP_NAME;
-	private static final String DESCRIPTION = "Do you want to save or receive files?";
+	private static final String TITLE = "Choose what files and folders to send";
+	private static final String DESCRIPTION = "You can also drag and drop from your desktop.";
 
 	private SenderSettings settings;
 
 	private JList fileList;
-	private JScrollPane scrollPane;
+	private JScrollPane fileListScrollPane;
+	private JRadioButton advancedOptionsRadioButton;
+
+	private AbstractWizardPage advancedOptionsPage;
 
 	public ChooseFilesPage(SenderSettings settings) {
 		super(TITLE, DESCRIPTION);
 		this.settings = settings;
+
+		advancedOptionsPage = new AdvancedOptionsPage(settings);
 
 		setupControls();
 		layoutControls();
@@ -32,47 +40,51 @@ public class ChooseFilesPage extends SnapWizardPage{
 
 	private void setupControls() {
 		fileList = new JList();
-		fileList.setModel(new SetListModel<File>());
+		fileList.setModel(new SetListModel<File>(settings.getFilesToSend()));
 		fileList.setDragEnabled(true);
 		fileList.setCellRenderer(new FileRenderer());
 		fileList.setTransferHandler(new FileTransferHandler());
+		fileList.getModel().addListDataListener(new UpdateWizardButtonsListDataListener(this));
 
-		scrollPane = new JScrollPane(fileList);
+		fileListScrollPane = new JScrollPane(fileList);
+
+		advancedOptionsRadioButton = new JRadioButton("Use advanced options", false);
+		advancedOptionsRadioButton.addActionListener(new UpdateWizardButtonsActionListener(this));
 	}
 
 	private void layoutControls() {
 		getPageContentPanel().setLayout(new MigLayout());
 
-		getPageContentPanel().add(scrollPane, "width 100%, height 100%");
+		getPageContentPanel().add(fileListScrollPane, "width 100%, height 100%, wrap");
+		getPageContentPanel().add(advancedOptionsRadioButton);
 	}
 
 	@Override
 	protected AbstractWizardPage getNextPage() {
-		// TODO Auto-generated method stub
-		return null;
+		if (advancedOptionsRadioButton.isSelected()) {
+			return advancedOptionsPage;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	protected boolean isCancelAllowed() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	protected boolean isPreviousAllowed() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	protected boolean isNextAllowed() {
-		// TODO Auto-generated method stub
-		return false;
+		return !settings.getFilesToSend().isEmpty();
 	}
 
 	@Override
 	protected boolean isFinishAllowed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

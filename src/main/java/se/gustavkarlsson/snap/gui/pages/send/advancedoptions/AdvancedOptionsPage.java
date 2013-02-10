@@ -15,8 +15,8 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.AbstractWizardPage;
+import se.gustavkarlsson.snap.domain.SenderSettings;
 import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
-import se.gustavkarlsson.snap.gui.pages.send.advancedoptions.old.CompressionRateLabelProvider;
 import se.gustavkarlsson.snap.resources.PropertyManager;
 import se.gustavkarlsson.snap.util.PasswordUtils;
 import se.gustavkarlsson.snap.util.PasswordUtils.Strength;
@@ -45,8 +45,9 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 
 	/**
 	 * Create the wizard.
+	 * @param settings
 	 */
-	public AdvancedOptionsPage() {
+	public AdvancedOptionsPage(SenderSettings settings) {
 		super(TITLE, DESCRIPTION);
 		createControls();
 		layoutControls();

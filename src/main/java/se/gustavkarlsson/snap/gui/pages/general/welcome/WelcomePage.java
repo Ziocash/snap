@@ -1,7 +1,5 @@
 package se.gustavkarlsson.snap.gui.pages.general.welcome;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ButtonGroup;
@@ -10,6 +8,7 @@ import javax.swing.JRadioButton;
 import net.miginfocom.swing.MigLayout;
 import se.gustavkarlsson.gwiz.AbstractWizardPage;
 import se.gustavkarlsson.snap.domain.SenderSettings;
+import se.gustavkarlsson.snap.gui.listeners.UpdateWizardButtonsActionListener;
 import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
 import se.gustavkarlsson.snap.gui.pages.send.choosefiles.ChooseFilesPage;
 import se.gustavkarlsson.snap.main.Snap;
@@ -34,11 +33,11 @@ public class WelcomePage extends SnapWizardPage {
 	private void setupControls() {
 		sendButton = new JRadioButton("Send", true);
 		sendButton.setMnemonic(KeyEvent.VK_S);
-		sendButton.addActionListener(new UpdateButtonsListener());
+		sendButton.addActionListener(new UpdateWizardButtonsActionListener(this));
 
 		receiveButton = new JRadioButton("Receive");
 		receiveButton.setMnemonic(KeyEvent.VK_R);
-		receiveButton.addActionListener(new UpdateButtonsListener());
+		receiveButton.addActionListener(new UpdateWizardButtonsActionListener(this));
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(sendButton);
@@ -75,14 +74,5 @@ public class WelcomePage extends SnapWizardPage {
 	@Override
 	protected boolean isFinishAllowed() {
 		return false;
-	}
-
-	private class UpdateButtonsListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			updateWizardButtons();
-		}
-
 	}
 }
