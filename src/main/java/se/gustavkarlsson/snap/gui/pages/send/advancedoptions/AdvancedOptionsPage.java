@@ -100,7 +100,14 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 
 		networkPanel.add(enableNatPmpPortMappingCheckBox, "span 2");
 
-		// createCompressionGroup();
+
+		// Compression
+		JPanel compressionPanel = new JPanel(new MigLayout("", "[][right, grow]"));
+		compressionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Compression"));
+		getPageContentPanel().add(compressionPanel, "growx, wrap");
+
+		compressionPanel.add(enableCompressionCheckBox);
+
 		// createEncryptionGroup();
 	}
 
