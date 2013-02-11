@@ -1,12 +1,12 @@
 package se.gustavkarlsson.snap.gui.pages.send.advancedoptions;
 
-import java.awt.Button;
 import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Label;
-import java.security.acl.Group;
+import java.net.InetAddress;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -18,18 +18,20 @@ import se.gustavkarlsson.gwiz.AbstractWizardPage;
 import se.gustavkarlsson.snap.domain.SenderSettings;
 import se.gustavkarlsson.snap.gui.pages.SnapWizardPage;
 import se.gustavkarlsson.snap.resources.PropertyManager;
+import se.gustavkarlsson.snap.util.NetworkUtils;
 import se.gustavkarlsson.snap.util.PasswordUtils;
 import se.gustavkarlsson.snap.util.PasswordUtils.Strength;
 
 public class AdvancedOptionsPage extends SnapWizardPage {
 	private static final long serialVersionUID = 1L;
 
-	private static final String CANONICAL_NAME = AdvancedOptionsPage.class.getCanonicalName();
-
 	private static final String TITLE = "Advanced Options";
-	private static final String DESCRIPTION = "Set advanced options.";
+	private static final String DESCRIPTION = "Set advanced options for the transfer.";
 
+	private JLabel listeningAddressLabel = null;
 	private JComboBox listeningAddressComboBox = null;
+
+	private JLabel portLabel = null;
 	private JTextField portTextField = null;
 
 	private JCheckBox enableUpnpPortMappingCheckBox = null;
@@ -50,15 +52,16 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 	public AdvancedOptionsPage(SenderSettings settings) {
 		super(TITLE, DESCRIPTION);
 		createControls();
+		setInitialData();
 		layoutControls();
 	}
 
 	private void createControls() {
-		listeningAddressComboBox = new JComboBox(); // TODO: Add some kind of model
-		// TODO listeningAddressComboBox.setValue(PropertyManager.getListeningAddress());
+		listeningAddressLabel = new JLabel("Listening address: ");
+		listeningAddressComboBox = new JComboBox();
 
-		portTextField = new JTextField(); // TODO: Add validation
-		portTextField.setText(String.valueOf(PropertyManager.getListeningPort()));
+		portLabel = new JLabel("Port: ");
+		portTextField = new JTextField();
 
 		enableUpnpPortMappingCheckBox = new JCheckBox("Enable UPnP port mapping");
 		enableUpnpPortMappingCheckBox.setEnabled(PropertyManager.isUsingUpnp());
@@ -66,20 +69,23 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 		enableNatPmpPortMappingCheckBox = new JCheckBox("Enable NAT-PMP port mapping");
 		enableNatPmpPortMappingCheckBox.setEnabled(PropertyManager.isUsingNatPmp());
 
-		enableCompressionCheckBox = new JCheckBox("Enable compression");
-		// TODO enableCompressionCheckBox.setEnabled(PropertyManager.isUsingCompression());
+		enableCompressionCheckBox = new JCheckBox("Enable");
+		compressionRateLabel = new JLabel("Rate: ");
+		compressionRateComboBox = new JComboBox();
 
-		compressionRateLabel = new JLabel("Rate:"); // TODO: Add some kind of model
-
-		compressionRateComboBox = new JComboBox(); // TODO: Add some kind of model
-		// TODO compressionRateComboBox.setValue(PropertyManager.getCompressionRate());
-
-		enableEncryptionCheckBox = new JCheckBox("Enable encryption");
-		// TODO enableEncryptionCheckBox.setEnabled(PropertyManager.isUsingEncryption());
-
-		encryptionKeyLabel = new JLabel("Encryption key"); // TODO: Add some kind of model
-
+		enableEncryptionCheckBox = new JCheckBox("Enable");
+		encryptionKeyLabel = new JLabel("Encryption key: "); // TODO: Add some kind of model
 		encryptionKeyTextField = new JTextField();
+	}
+
+	private void setInitialData() {
+		Vector<InetAddress> networkAddresses = new Vector<InetAddress>();
+		networkAddresses.addAll(NetworkUtils.listInetAddresses());
+		ComboBoxModel model = new DefaultComboBoxModel(networkAddresses);
+		listeningAddressComboBox.setModel(model);
+		listeningAddressComboBox.setRenderer(new NetworkAddressComboBoxRenderer());
+
+		portTextField.setInputVerifier(new PortInputVerifier());
 	}
 
 	private void layoutControls() {
@@ -90,89 +96,33 @@ public class AdvancedOptionsPage extends SnapWizardPage {
 		networkPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Network"));
 		getPageContentPanel().add(networkPanel, "growx, wrap");
 
-		networkPanel.add(new JLabel("Listening address:"));
+		networkPanel.add(listeningAddressLabel);
 		networkPanel.add(listeningAddressComboBox, "wrap");
-
-		networkPanel.add(new JLabel("Port:"));
+		networkPanel.add(portLabel);
 		networkPanel.add(portTextField, "wrap, width 50");
-
 		networkPanel.add(enableUpnpPortMappingCheckBox, "wrap, span 2");
-
 		networkPanel.add(enableNatPmpPortMappingCheckBox, "span 2");
 
 
 		// Compression
-		JPanel compressionPanel = new JPanel(new MigLayout("", "[][right, grow]"));
+		JPanel compressionPanel = new JPanel(new MigLayout("", "[][right, grow][right]"));
 		compressionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Compression"));
 		getPageContentPanel().add(compressionPanel, "growx, wrap");
 
 		compressionPanel.add(enableCompressionCheckBox);
+		compressionPanel.add(compressionRateLabel);
+		compressionPanel.add(compressionRateComboBox);
 
-		// createEncryptionGroup();
-	}
 
-	private void createCompressionGroup(Composite container) {
-		Group compressionGroup = new Group(container, SWT.NONE);
-		compressionGroup.setLayoutData("growx, wrap");
-		compressionGroup.setLayout(new MigLayout("", "[grow][][]"));
-		compressionGroup.setText("Compression");
+		// Encryption
+		JPanel encryptionPanel = new JPanel(new MigLayout("", "[grow][][]"));
+		encryptionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Encryption"));
+		getPageContentPanel().add(encryptionPanel, "growx, wrap");
 
-		enableCompressionButton = new Button(compressionGroup, SWT.CHECK);
-		enableCompressionButton.setText("Enable");
-
-		compressionRateLabel = new Label(compressionGroup, SWT.NONE);
-		compressionRateLabel.setText("Rate:");
-
-		compressionRateComboViewer = new ComboViewer(compressionGroup, SWT.READ_ONLY);
-		compressionRateComboViewer.setLabelProvider(new CompressionRateLabelProvider());
-		compressionRateComboViewer.setContentProvider(new ArrayContentProvider());
-		compressionRateComboViewer.setInput(new Integer[] { 9, 5, 1 });
-		compressionRateCombo = compressionRateComboViewer.getCombo();
-		compressionRateCombo.select(1);
-	}
-
-	private void createEncryptionGroup(Composite container) {
-		encryptionGroup = new Group(container, SWT.NONE);
-		encryptionGroup.setLayoutData("growx");
-		encryptionGroup.setLayout(new MigLayout("", "[grow][][]"));
-		encryptionGroup.setText("Encryption");
-
-		enableEncryptionButton = new Button(encryptionGroup, SWT.CHECK);
-		enableEncryptionButton.setText("Enable");
-
-		encryptionKeyLabel = new Label(encryptionGroup, SWT.NONE);
-		encryptionKeyLabel.setText("Encryption key:");
-
-		encryptionKeyText = new Text(encryptionGroup, SWT.BORDER | SWT.PASSWORD);
-		encryptionKeyText.setLayoutData("width 150");
-		encryptionKeyText.addVerifyListener(new EncryptionKeyVerifyListener());
-	}
-
-	private void bindComponents() {
-		DataBindingContext bindingContext = new DataBindingContext(SWTObservables.getRealm(Display.getCurrent()));
-
-		// Compression widgets enabled
-		IObservableValue enableCompressionButtonSelection = WidgetProperties.selection().observe(
-				enableCompressionButton);
-		IObservableValue compressionRateLabelEnabled = WidgetProperties.enabled().observe(compressionRateLabel);
-		IObservableValue compressionRateComboEnabled = WidgetProperties.enabled().observe(compressionRateCombo);
-		bindingContext.bindValue(enableCompressionButtonSelection, compressionRateLabelEnabled);
-		bindingContext.bindValue(enableCompressionButtonSelection, compressionRateComboEnabled);
-
-		// Encryption widgets enabled
-		IObservableValue enableEncryptionButtonSelection = WidgetProperties.selection().observe(enableEncryptionButton);
-		IObservableValue encryptionKeyLabelEnabled = WidgetProperties.enabled().observe(encryptionKeyLabel);
-		IObservableValue encryptionKeyTextEnabled = WidgetProperties.enabled().observe(encryptionKeyText);
-		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyLabelEnabled);
-		bindingContext.bindValue(enableEncryptionButtonSelection, encryptionKeyTextEnabled);
-
-		// Encryption key color
-		IObservableValue encryptionKeyTextModify = WidgetProperties.text(SWT.Modify).observe(encryptionKeyText);
-		IObservableValue encryptionKeyTextForeground = WidgetProperties.foreground().observe(encryptionKeyText);
-		UpdateValueStrategy encryptionKeyToColorConverter = new UpdateValueStrategy()
-		.setConverter(new EncryptionKeyToColorConverter());
-		bindingContext.bindValue(encryptionKeyTextModify, encryptionKeyTextForeground, encryptionKeyToColorConverter,
-				null);
+		encryptionPanel.add(enableEncryptionCheckBox);
+		encryptionPanel.add(encryptionKeyLabel);
+		encryptionPanel.add(encryptionKeyLabel);
+		encryptionPanel.add(encryptionKeyTextField, "width 150");
 	}
 
 	private class EncryptionKeyToColorConverter implements IConverter {
